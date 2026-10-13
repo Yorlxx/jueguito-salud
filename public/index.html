@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Stick Story: Prison Break Nutricional — Fase 1 Local</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤️</text></svg>" />
+<link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+<div id="app">
+  <!-- HUD: banderines de papel con cinta -->
+  <header id="hud">
+    <div class="pennant left"><div class="k">❤️ VIDAS</div><div id="hearts">❤️❤️❤️</div></div>
+    <div class="pennant mid"><div class="k">⏱️ NIVEL <span id="hudLvl">1/8</span></div><div class="v"><span id="timerNum">8</span><span style="font-size:11px">s</span></div></div>
+    <div class="pennant right"><div class="k">⚖️ PESO</div><div class="v" id="hudWeight">70.0</div><div class="k" style="font-size:9px">kg · <span id="hudErr">0 ERR</span></div></div>
+  </header>
+  <div id="levelTape">★ <span id="tapeTitle">RONDA 1 · 07:30 AM</span> ★</div>
+  <div id="dots" aria-hidden="true"></div>
+
+  <!-- Escenario central -->
+  <main>
+    <section id="panel" aria-label="Escenario">
+      <div id="sceneTag"><span id="sceneLabel">CELDA 01 · HABITACIÓN</span><span id="cutTag">● ¡ACCIÓN!</span></div>
+      <canvas id="gameCanvas" width="360" height="340"></canvas>
+      <div id="speech"><span class="who">💬 DEV STICK:</span><br /><span id="narrativeText">…</span></div>
+    </section>
+  </main>
+
+  <!-- Zona inferior: polaroids -->
+  <footer id="optionsZone">
+    <div id="polas"></div>
+    <div id="optsHidden">🎬 ¡ACCIÓN EN CURSO…!</div>
+    <button id="btnContinue" type="button">CONTINUAR ▶</button>
+  </footer>
+</div>
+
+<!-- Elige tu grupo (sincroniza vidas/errores con el panel admin) -->
+<div id="groupOverlay">
+  <div id="groupBox">
+    <h2>📱 ELIGE TU GRUPO</h2>
+    <p>Cada celular juega por un grupo.<br />El proyector los ve en vivo.</p>
+    <div id="groupGrid">
+      <button type="button" data-group="Grupo 1">1</button>
+      <button type="button" data-group="Grupo 2">2</button>
+      <button type="button" data-group="Grupo 3">3</button>
+      <button type="button" data-group="Grupo 4">4</button>
+    </div>
+    <p class="tiny">Sin Supabase configurado igual juegas en local.</p>
+  </div>
+</div>
+
+<!-- Podio final -->
+<div id="endScreen" role="dialog" aria-modal="true" aria-label="Resultados">
+  <div id="endBox">
+    <div id="endEmoji"></div>
+    <h2 id="endBadge"></h2>
+    <p id="endDesc"></p>
+    <div id="endStats"></div>
+    <button id="btnRetry" type="button">🔄 REINTENTAR</button>
+  </div>
+</div>
+
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>

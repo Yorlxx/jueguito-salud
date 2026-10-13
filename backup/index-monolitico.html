@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Stick Story: Prison Break Nutricional — Fase 1 Local</title>
+<style>
+  /* ===== CLON HENRY STICKMIN / PRISON BREAK: STICK STORY · 9:16 vertical · 0 dependencias ===== */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #5b6b85; color: #1c2433; min-height: 100vh; display: flex; justify-content: center;
+    font-family: "Comic Sans MS", "Chalkboard SE", "Segoe Print", cursive, sans-serif;
+    background-image: radial-gradient(rgba(255,255,255,.14) 1.5px, transparent 1.6px);
+    background-size: 18px 18px;
+  }
+  #app { width: 100%; max-width: 430px; min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column;
+    background: #8b9bb4; border-left: 4px solid #1c2433; border-right: 4px solid #1c2433; position: relative; }
+
+  /* --- HUD: banderines de papel flotantes --- */
+  #hud { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; padding: 12px 10px 0; z-index: 5; }
+  .pennant { position: relative; background: #fdf6e3; border: 3px solid #1c2433; border-radius: 4px;
+    padding: 8px 10px 6px; min-width: 96px; text-align: center; box-shadow: 3px 4px 0 rgba(28,36,51,.55); }
+  .pennant::before { content: ""; position: absolute; top: -11px; left: 50%; transform: translateX(-50%) rotate(-2deg);
+    width: 46px; height: 16px; background: rgba(255,255,255,.55); border: 2px solid rgba(28,36,51,.35); }
+  .pennant.left { transform: rotate(-4deg); } .pennant.right { transform: rotate(4deg); }
+  .pennant.mid { transform: rotate(1deg); background: #e0f2fe; }
+  .pennant .k { font-size: 10px; font-weight: 900; letter-spacing: 1px; }
+  .pennant .v { font-size: 17px; font-weight: 900; }
+  #timerNum.danger { color: #dc2626; animation: blink .5s infinite; }
+  @keyframes blink { 50% { opacity: .45; } }
+  #hearts { font-size: 19px; letter-spacing: 2px; line-height: 1.3; }
+  #hearts .lost { filter: grayscale(1); opacity: .55; }
+  #hearts.break { animation: heartBreak .5s; }
+  @keyframes heartBreak { 0% { transform: scale(1); } 40% { transform: scale(1.35) rotate(-8deg); } 100% { transform: scale(1); } }
+
+  /* --- Tira de nivel estilo cinta --- */
+  #levelTape { align-self: center; margin: 10px 0 0; background: #1c2433; color: #fde047; font-weight: 900;
+    font-size: 12px; letter-spacing: 1px; padding: 5px 18px; transform: rotate(-1.2deg);
+    box-shadow: 2px 3px 0 rgba(0,0,0,.35); }
+  #dots { display: flex; gap: 5px; justify-content: center; padding: 7px 0 0; }
+  #dots span { width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid #1c2433; background: #e5e7eb; }
+  #dots .done { background: #22c55e; } #dots .now { background: #facc15; animation: blink 1s infinite; }
+
+  /* --- Panel cómic / escenario --- */
+  main { flex: 1; display: flex; flex-direction: column; padding: 8px 10px; }
+  #panel { background: #fdf6e3; border: 4px solid #1c2433; border-radius: 6px; overflow: hidden;
+    box-shadow: 5px 6px 0 rgba(28,36,51,.55); }
+  #sceneTag { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px;
+    background: #1c2433; color: #fff; font-size: 10px; font-weight: 900; letter-spacing: 1px; }
+  #cutTag { display: none; color: #fca5a5; animation: blink .6s infinite; }
+  #panel.cut #cutTag { display: inline; }
+  #gameCanvas { display: block; width: 100%; height: auto; background: #aebdd2; }
+  #speech { margin: 8px; background: #fff; border: 3px solid #1c2433; border-radius: 12px; padding: 8px 10px;
+    position: relative; font-size: 12px; line-height: 1.45; min-height: 52px; }
+  #speech::before { content: ""; position: absolute; top: -12px; left: 34px; border: 7px solid transparent;
+    border-bottom-color: #1c2433; }
+  #speech .who { font-size: 9px; font-weight: 900; letter-spacing: 1px; color: #0284c7; }
+
+  /* --- Thumb zone: polaroids --- */
+  #optionsZone { padding: 10px 10px 14px; }
+  #polas { display: flex; gap: 10px; justify-content: center; }
+  .pola { flex: 1; max-width: 128px; background: #fff; border: 1px solid #d6d3d1; padding: 8px 8px 10px;
+    box-shadow: 4px 5px 0 rgba(28,36,51,.55); cursor: pointer; position: relative;
+    transition: transform .12s; font-family: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .pola:nth-child(1) { transform: rotate(-2.5deg); } .pola:nth-child(2) { transform: rotate(1.5deg); }
+  .pola:nth-child(3) { transform: rotate(-1deg); }
+  .pola:active { transform: scale(.93) rotate(0deg); }
+  .pola::before { content: ""; position: absolute; top: -10px; left: 50%; transform: translateX(-50%) rotate(3deg);
+    width: 40px; height: 14px; background: rgba(253,224,71,.75); border: 1px solid rgba(28,36,51,.3); }
+  .pola .photo { background: #cfe3f5; border: 2px solid #1c2433; aspect-ratio: 1/1; display: flex;
+  .pola .cap { display: block; margin-top: 6px; font-size: 10.5px; font-weight: 900; line-height: 1.25; color: #1c2433; text-align: center; min-height: 28px; }
+    align-items: center; justify-content: center; font-size: 52px; }
+  #optsHidden { display: none; text-align: center; font-weight: 900; font-size: 13px; padding: 14px 0 4px;
+    animation: blink 1s infinite; }
+  #btnContinue { display: none; width: 100%; margin-top: 4px; padding: 14px; font-family: inherit;
+    font-size: 17px; font-weight: 900; letter-spacing: 2px; color: #1c2433; background: #facc15;
+    border: 4px solid #1c2433; border-radius: 10px; box-shadow: 4px 5px 0 rgba(28,36,51,.6); cursor: pointer; }
+  #btnContinue:active { transform: scale(.95); }
+  #btnContinue.show { display: block; animation: pop .35s; }
+  @keyframes pop { 0% { transform: scale(.6); } 70% { transform: scale(1.06); } 100% { transform: scale(1); } }
+  @keyframes shakeX { 0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(7px)}75%{transform:translateX(-5px)} }
+  .shake { animation: shakeX .35s ease 2; }
+
+  /* --- Pantalla final podio --- */
+  #endScreen { display: none; position: fixed; inset: 0; z-index: 50; background: rgba(28,36,51,.92);
+    align-items: center; justify-content: center; padding: 16px; }
+  #endScreen.show { display: flex; }
+  #endBox { width: 100%; max-width: 400px; background: #fdf6e3; border: 5px solid #1c2433; border-radius: 8px;
+    padding: 22px 18px; text-align: center; box-shadow: 6px 7px 0 rgba(0,0,0,.5); transform: rotate(-.6deg); }
+  #endEmoji { font-size: 60px; } #endBadge { margin-top: 6px; font-size: 21px; font-weight: 900; }
+  #endDesc { margin-top: 8px; font-size: 13px; line-height: 1.5; }
+  #endStats { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  #endStats .cell { background: #fff; border: 3px solid #1c2433; border-radius: 6px; padding: 8px 4px; font-size: 11px; font-weight: 900; }
+  #endStats .big { font-size: 20px; display: block; }
+  #btnRetry { margin-top: 14px; width: 100%; padding: 14px; font-family: inherit; font-size: 16px; font-weight: 900;
+    letter-spacing: 1px; background: #22c55e; color: #fff; border: 4px solid #1c2433; border-radius: 10px;
+    box-shadow: 4px 5px 0 rgba(28,36,51,.6); cursor: pointer; -webkit-text-stroke: .5px #1c2433; }
+  #btnRetry:active { transform: scale(.95); }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- HUD banderines -->
+  <div id="hud">
+    <div class="pennant left"><div class="k">❤️ VIDAS</div><div id="hearts">❤️❤️❤️</div></div>
+    <div class="pennant mid"><div class="k">⏱️ NIVEL <span id="hudLvl">1/8</span></div><div class="v"><span id="timerNum">8</span><span style="font-size:11px">s</span></div></div>
+    <div class="pennant right"><div class="k">⚖️ PESO</div><div class="v" id="hudWeight">70.0</div><div class="k" style="font-size:9px">kg · <span id="hudErr">0 ERR</span></div></div>
+  </div>
+  <div id="levelTape">★ <span id="tapeTitle">RONDA 1 · 08:00 AM</span> ★</div>
+  <div id="dots"></div>
+
+  <!-- Escenario -->
+  <main>
+    <div id="panel">
+      <div id="sceneTag"><span id="sceneLabel">CELDA 01 · HABITACIÓN</span><span id="cutTag">● ¡ACCIÓN!</span></div>
+      <canvas id="gameCanvas" width="360" height="340"></canvas>
+      <div id="speech"><span class="who">💬 DEV STICK:</span><br><span id="narrativeText">…</span></div>
+    </div>
+  </main>
+
+  <!-- Polaroids -->
+  <div id="optionsZone">
+    <div id="polas"></div>
+    <div id="optsHidden">🎬 ¡ACCIÓN EN CURSO…!</div>
+    <button id="btnContinue">CONTINUAR ▶</button>
+  </div>
+</div>
+
+<!-- Podio final -->
+<div id="endScreen">
+  <div id="endBox">
+    <div id="endEmoji"></div>
+    <h2 id="endBadge"></h2>
+    <p id="endDesc"></p>
+    <div id="endStats"></div>
+    <button id="btnRetry">🔄 REINTENTAR</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* =====================================================================
+ * STICK STORY · FASE 1 LOCAL · clon visual Henry Stickmin (9:16, 0 deps).
+ * Capas: Estado → Contenido(8 rondas con trampa) → Room+Stickman (canvas) →
+ *         Fails cómicos 3s + sellos → Timer 8s → Podio final.
+ * ===================================================================== */
+
+// ---------- 1. ESTADO ----------
+const INITIAL = Object.freeze({ lives: 3, errors: 0, weight: 70.0, roundIndex: 0, debuff: null }); // arcade: 3 vidas, sin HP
+let S = { ...INITIAL };
+const $ = (id) => document.getElementById(id);
+let prevLives = 3; // para animar el corazón recién perdido en el HUD
+
+// ---------- 2. CONTENIDO: 8 rondas CON TRAMPA (títulos engañosos en UI; stats solo aquí) ----------
+const ROUNDS = [
+  { clock: "07:30 AM", room: "bedroom", day: "DÍA", tape: "RONDA 1 · 07:30 AM",
+    scene: "CELDA 01 · HABITACIÓN", narrative: "¡Suena la alarma! La cocina y el celu pelean por tu atención. ¡Tienes 8 segundos!",
+    options: [
+      { icon: "🥤", label: "Energizante Zero ¡sin azúcar!", name: "energizante zero", errors: 1, weight: 0, scene: "caffeine", fail: true, setDebuff: "gastritis",
+        stamp: "FAIL ❌ ¡ACIDEZ Y ANSIEDAD!", bio: "¡Trampa! El 'zero azúcar' igual irrita el estómago vacío y la cafeína dispara la ansiedad." },
+      { icon: "📱", label: "Notificaciones ¡solo 20 min!", name: "notificaciones", errors: 1, weight: 0, scene: "doomscroll", fail: true, setDebuff: "hipoglucemia",
+        stamp: "FAIL ❌ ¡HIPNOSIS Y SIN AGUA!", bio: "20 minutos que se comen la mañana: ni agua ni desayuno. ¡Glucosa por el suelo!" },
+      { icon: "💧", label: "Agua + Desayuno power", name: "agua y desayuno", errors: 0, weight: 0, scene: "balanced", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡ENERGÍA ESTABLE!", bio: "¡Agua + proteína y fibra! Hidratación y combustible real por horas." },
+    ] },
+  { clock: "09:30 AM", room: "bedroom", day: "DÍA", tape: "RONDA 2 · 09:30 AM",
+    scene: "CELDA 02 · UNIVERSIDAD", narrative: "Receso en la U. El kiosco presume etiquetas 'fit'… ¡lee la letra chica!",
+    options: [
+      { icon: "🍫", label: "Barra 'Fit' comercial", name: "barra fit", errors: 1, weight: 0.5, scene: "doomscroll", fail: true, heavy: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡PICO Y CAÍDA DE GLUCOSA!", bio: "¡Trampa! La barra 'fit' esconde 25 g de azúcar: subidón y crash con niebla mental." },
+      { icon: "🥜", label: "Frutos secos + Manzana", name: "frutos secos", errors: 0, weight: 0, scene: "balanced", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡ENERGÍA ESTABLE!", bio: "¡Grasas buenas + fibra real! Saciedad de verdad, sin crash." },
+      { icon: "🍘", label: "Galletas saladas 'ligeras'", name: "galletas saladas", errors: 1, weight: 0.3, scene: "snackVoid", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡HAMBRE FANTASMA!", bio: "Refinados sin fibra ni proteína: comes y comes… ¡y sigues con hambre!" },
+    ] },
+  { clock: "01:00 PM", room: "desk", day: "DÍA", tape: "RONDA 3 · 01:00 PM",
+    scene: "CELDA 03 · ESCRITORIO", narrative: "¡5 horas codeando! El almuerzo no se negocia… aunque una pastilla lo prometa.",
+    options: [
+      { icon: "💊", label: "Pastilla milagrosa ¡sin pausar!", name: "pastilla", errors: 2, weight: -1.5, scene: "gastritis", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡GASTRITIS Y BAJA GLUCOSA!", bio: "¡Trampa mortal! Las vitaminas NO son comida: acidez severa, gastritis y desmayo." },
+      { icon: "🍔", label: "Combo XL ¡bien rendidor!", name: "fast food", errors: 1, weight: 2.5, scene: "fatball", fail: true, heavy: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡EXCESO DE ULTRAPROCESADOS!", bio: "Grasa saturada frente al monitor: somnolencia total y peso descompensado." },
+      { icon: "🥗", label: "Pausa 20 min + Menú casero", name: "menú sano", errors: 0, weight: 0, scene: "balanced", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡ENERGÍA ESTABLE!", bio: "¡Proteína + carbohidrato complejo! Aura dorada y tarde productiva." },
+    ] },
+  { clock: "04:00 PM", room: "desk", day: "TARDE", tape: "RONDA 4 · 04:00 PM",
+    scene: "CELDA 04 · SETUP", narrative: "La bajona de la tarde pega fuerte. El café con jarabe te guiña el ojo…",
+    options: [
+      { icon: "☕", label: "Café doble ¡con jarabe!", name: "café doble", errors: 1, weight: 0, scene: "caffeine", fail: true, setDebuff: "gastritis",
+        stamp: "FAIL ❌ ¡SOBREESTIMULADO!", bio: "Azúcar + cafeína doble: insulina por las nubes, temblor y crash brutal." },
+      { icon: "🍦", label: "Yogur + Fruta y maní", name: "yogur", errors: 0, weight: 0, scene: "balanced", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡ENERGÍA ESTABLE!", bio: "¡Proteína + grasa buena! Energía pareja hasta la noche." },
+      { icon: "🍬", label: "Gomitas 'sin grasa'", name: "gomitas", errors: 1, weight: 0.4, scene: "doomscroll", fail: true, heavy: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡AZÚCAR DISFRAZADO!", bio: "¡Trampa! 'Sin grasa' = puro azúcar refinado: pico, crash y más antojo." },
+    ] },
+  { clock: "06:30 PM", room: "desk", day: "TARDE", tape: "RONDA 5 · 06:30 PM",
+    scene: "CELDA 05 · POST-CLASES", narrative: "Salen las clases. La cena decide si duermes… o si la panza te despierta.",
+    options: [
+      { icon: "🎮", label: "¡Una partidita más!", name: "saltar cena", errors: 2, weight: -0.8, scene: "gastritis", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡GASTRITIS NOCTURNA!", bio: "Saltarse la cena por jugar: el músculo se pierde y el descanso se arruina." },
+      { icon: "🥘", label: "Cena ligera proteica", name: "cena ligera", errors: 0, weight: 0, scene: "balanced", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡ENERGÍA ESTABLE!", bio: "¡Proteína + verduras! Reparación muscular y sueño de campeón." },
+      { icon: "🍕", label: "Pizza XL ¡a las 10 PM!", name: "pizza noche", errors: 1, weight: 1.5, scene: "fatball", fail: true, heavy: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡REFLUJO E INSOMNIO!", bio: "Cena pesada de noche: reflujo, insomnio y la panza rebota hasta dormirse." },
+    ] },
+  { clock: "08:30 PM", room: "desk", day: "TARDE", tape: "RONDA 6 · 08:30 PM",
+    scene: "CELDA 06 · GIMNASIO", narrative: "Hora de moverse… pero el cuerpo viene sin combustible. ¡Elige sabio!",
+    options: [
+      { icon: "🏋️", label: "¡HIIT brutal 1 hora!", name: "hiit", errors: 1, weight: -0.5, scene: "gastritis", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡CATABOLISMO Y COLAPSO!", bio: "¡Trampa! Hierro pesado sin comer: mareos, el músculo se quema y ¡al suelo!" },
+      { icon: "🧘", label: "Estirar + Caminar 15 min", name: "pausa activa", errors: 0, weight: 0, scene: "recover", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡RECARGA TOTAL!", bio: "¡Pausa activa perfecta! Circulación, oxígeno y cero lesiones." },
+      { icon: "🛋️", label: "Sillón + Pantallas", name: "sillón", errors: 1, weight: 0.3, scene: "zombie", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡MODO ZOMBI!", bio: "¡Echado 3 horas! La espalda se oxida y el cerebro se apaga." },
+    ] },
+  { clock: "10:30 PM", room: "bedroom", day: "NOCHE", tape: "RONDA 7 · 10:30 PM",
+    scene: "CELDA 07 · LABORATORIO IA", narrative: "La IA te vende milagros y el algoritmo te espía el antojo…",
+    options: [
+      { icon: "🤖", label: "¡Detox IA 500 kcal!", name: "detox ia", errors: 2, weight: -1.2, scene: "robot", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡DESNUTRICIÓN Y REBOTE!", bio: "¡Trampa! 500 kcal dictadas por un bot: desnutrición y rebote grave." },
+      { icon: "📋", label: "IA + Nutricionista real", name: "ia responsable", errors: 0, weight: 0, scene: "balanced", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡PLAN INTELIGENTE!", bio: "¡La IA propone y el profesional dispone! Hábito sostenible desbloqueado." },
+      { icon: "💊", label: "Suplementos 'virales'", name: "suplementos", errors: 1, weight: 0, scene: "robot", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡FRAUDE ALGORÍTMICO!", bio: "¡Píldoras milagro del algoritmo! Ni nutren ni adelgazan: solo vacían tu bolsillo." },
+    ] },
+  { clock: "11:50 PM", room: "bedroom", day: "NOCHE", tape: "RONDA 8 · 11:50 PM",
+    scene: "CELDA 08 · DORMITORIO", narrative: "Última escena. El celu brilla en la oscuridad… ¡cierra el día como campeón!",
+    options: [
+      { icon: "📱", label: "¡Un videíto más!", name: "doomscrolling", errors: 1, weight: 0, scene: "doomscroll", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡MELATONINA BLOQUEADA!", bio: "Doomscrolling nocturno: la luz azul inhibe la melatonina. ¡Mañana zombi!" },
+      { icon: "🌙", label: "Adiós pantallas ¡a mimir!", name: "descanso", errors: 0, weight: 0, scene: "sleepWin", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡DESCANSO DE ORO!", bio: "¡30 min sin pantallas + 8 horas de sueño! Reparación total activada." },
+      { icon: "💊", label: "Pastilla para dormir", name: "pastilla dormir", errors: 1, weight: 0, scene: "pills", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡NO TE AUTOMEDIQUES!", bio: "¡Trampa! Pastillas sin receta: atontan, no descansan y crean dependencia." },
+    ] },
+];
+const TIMEOUT = { icon: "😱", name: "estrés", errors: 2, weight: 0, scene: "paralysis",
+  fail: true, keepDebuff: true, stamp: "FAIL ❌ ¡PARÁLISIS POR ESTRÉS!",
+  bio: "¡8 segundos mirando al vacío! El estrés elige… ¡y elige mal!" };
+
+// ---------- 3. VIDAS ARCADE + DOMINÓ OCULTO ----------
+// Opción mala (fail) = -1 vida. Sana = vidas intactas. El dominó solo agrava el relato.
+function applyChoice(opt) {
+  const domino = !!(S.debuff && opt.heavy);
+  let lost = 0;
+  if (opt.fail || (opt.errors || 0) > 0) { S.lives = Math.max(0, S.lives - 1); lost = 1; }
+  S.errors += opt.errors || 0;
+  S.weight = Math.round((S.weight + (opt.weight || 0)) * 10) / 10;
+  if ("setDebuff" in opt) S.debuff = opt.setDebuff;
+  return { lost, domino };
+}
+
+// ---------- 4. SONIDO SINTETIZADO (WebAudio, sin archivos) ----------
+let AC = null;
+function beep(freq, dur, type, vol) {
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type || "square"; o.frequency.value = freq || 440;
+    g.gain.value = vol || 0.05;
+    o.connect(g); g.connect(AC.destination);
+    o.start(); g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + (dur || 0.12));
+    o.stop(AC.currentTime + (dur || 0.12));
+  } catch (e) { /* sin audio no pasa nada */ }
+}
+const sfxPop = () => { beep(700, 0.1); setTimeout(() => beep(1000, 0.12), 90); };
+const sfxFail = () => { beep(220, 0.18, "sawtooth"); setTimeout(() => beep(140, 0.3, "sawtooth"), 150); };
+const sfxBoing = () => { beep(180, 0.12, "sine", 0.08); setTimeout(() => beep(320, 0.14, "sine", 0.08), 110); };
+
+// ---------- 5. MOTOR CANVAS: habitación + Stickman cómic ----------
+class Animator {
+  constructor(canvas) {
+    this.cv = canvas; this.ctx = canvas.getContext("2d");
+    this.W = canvas.width; this.H = canvas.height;
+    this.raf = null; this.idleT = 0; this.lookX = 0; // lookX: pupilas siguen el último toque
+    this.startIdle();
+  }
+  clear() { this.ctx.clearRect(0, 0, this.W, this.H); }
+  cancel() { if (this.raf) cancelAnimationFrame(this.raf); this.raf = null; }
+  txt(s, x, y, size, color, stroke) {
+    const c = this.ctx; c.textAlign = "center";
+    c.font = "900 " + (size || 13) + 'px "Comic Sans MS", cursive, sans-serif';
+    if (stroke) { c.lineWidth = 4; c.strokeStyle = "#1c2433"; c.strokeText(s, x, y); }
+    c.fillStyle = color || "#1c2433"; c.fillText(s, x, y);
+  }
+  line(x1, y1, x2, y2, color, w) { const c = this.ctx; c.strokeStyle = color || "#1c2433";
+    c.lineWidth = w || 6; c.lineCap = "round"; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); }
+  circle(x, y, r, fill, stroke, w) { const c = this.ctx; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2);
+    if (fill) { c.fillStyle = fill; c.fill(); } if (stroke) { c.lineWidth = w || 4; c.strokeStyle = stroke; c.stroke(); } }
+  star(x, y, r, color) { // estrella de impacto cómica
+    const c = this.ctx; c.save(); c.translate(x, y); c.beginPath();
+    for (let i = 0; i < 12; i++) { const a = (i / 12) * Math.PI * 2, rr = i % 2 ? r * 0.55 : r;
+      c.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); }
+    c.closePath(); c.fillStyle = color || "#facc15"; c.fill();
+    c.lineWidth = 4; c.strokeStyle = "#1c2433"; c.stroke(); c.restore();
+  }
+  speedLines(x, y, n, color) { // líneas de velocidad
+    const c = this.ctx; c.strokeStyle = color || "#1c2433"; c.lineWidth = 3;
+    for (let i = 0; i < (n || 6); i++) { const yy = y - 40 + i * 16;
+      c.beginPath(); c.moveTo(x - 70, yy); c.lineTo(x - 30, yy); c.stroke(); }
+  }
+
+  /* --- Habitación del estudiante: escritorio + laptop + cama + ventana --- */
+  room(kind, day) {
+    const c = this.ctx, W = this.W, H = this.H;
+    const night = day === "NOCHE";
+    c.fillStyle = night ? "#3b4a63" : "#aebdd2"; c.fillRect(0, 0, W, H); // pared
+    c.fillStyle = night ? "#2c3850" : "#93a5c0"; c.fillRect(0, 0, W, 60);
+    c.fillStyle = night ? "#232c42" : "#7c8dab"; c.fillRect(0, 268, W, H - 268); // suelo
+    c.strokeStyle = "#1c2433"; c.lineWidth = 3;
+    c.beginPath(); c.moveTo(0, 268); c.lineTo(W, 268); c.stroke();
+    // ventana día/noche
+    c.fillStyle = "#fdf6e3"; c.fillRect(238, 70, 96, 80); c.lineWidth = 4; c.strokeRect(238, 70, 96, 80);
+    c.fillStyle = night ? "#1e2a4a" : "#7dd3fc"; c.fillRect(244, 76, 84, 68);
+    c.strokeStyle = "#1c2433"; c.lineWidth = 3;
+    c.beginPath(); c.moveTo(286, 76); c.lineTo(286, 144); c.moveTo(244, 110); c.lineTo(328, 110); c.stroke();
+    if (night) { c.fillStyle = "#fde047"; c.fillRect(300, 88, 16, 16); }
+    else { c.fillStyle = "#facc15"; c.beginPath(); c.arc(262, 94, 11, 0, 7); c.fill(); }
+    // póster code
+    c.fillStyle = "#fdf6e3"; c.fillRect(26, 74, 84, 60); c.lineWidth = 4; c.strokeRect(26, 74, 84, 60);
+    this.txt("</>", 68, 100, 20, "#0284c7"); this.txt("DEV", 68, 122, 13, "#1c2433");
+    // cama (izquierda)
+    c.fillStyle = "#6d5bd0"; c.fillRect(14, 196, 128, 26);
+    c.fillStyle = "#fdf6e3"; c.fillRect(14, 182, 128, 20);
+    c.fillStyle = "#f87171"; c.fillRect(14, 170, 40, 16); // almohada
+    c.lineWidth = 4; c.strokeRect(14, 170, 142, 52);
+    this.line(20, 222, 20, 258, "#1c2433", 6); this.line(136, 222, 136, 258, "#1c2433", 6);
+    // escritorio + laptop (derecha)
+    c.fillStyle = "#b07a4f"; c.fillRect(196, 208, 150, 14);
+    this.line(204, 222, 204, 262, "#1c2433", 6); this.line(338, 222, 338, 262, "#1c2433", 6);
+    c.fillStyle = "#1c2433"; c.fillRect(232, 168, 78, 42); // pantalla
+    c.fillStyle = night ? "#0c4a6e" : "#38bdf8"; c.fillRect(237, 173, 68, 32);
+    c.fillStyle = "#22d3ee"; c.font = "900 13px monospace"; c.textAlign = "center";
+    c.fillText("</>", 271, 195);
+    c.fillStyle = "#475569"; c.fillRect(222, 210, 98, 8); // base
+  }
+
+  /* --- Stickman expresivo: cara cómic + ojos que siguen el toque + gorra dev --- */
+  stick(x, y, s, p) {
+    p = p || {};
+    const c = this.ctx;
+    c.save(); c.translate(x, y); c.scale(s, s);
+    if (p.faint) { c.translate(0, 34 * p.faint); c.rotate(-1.35 * p.faint); }
+    if (p.lean) c.rotate(p.lean);
+    const sq = p.squash || [1, 1]; c.scale(sq[0], sq[1]); // squash & stretch
+    // aura dorada de éxito
+    if (p.aura) { c.beginPath(); c.arc(0, -48, 58, 0, Math.PI * 2);
+      c.strokeStyle = p.aura; c.lineWidth = 4; c.setLineDash([10, 7]); c.stroke(); c.setLineDash([]);
+      c.beginPath(); c.arc(0, -48, 48, 0, Math.PI * 2);
+      c.strokeStyle = p.aura; c.globalAlpha = 0.5; c.lineWidth = 8; c.stroke(); c.globalAlpha = 1; }
+    // cuerpo bola de grasa (rebota por el cuarto)
+    if (p.ball) {
+      const r = 34 * p.ball;
+      c.beginPath(); c.arc(0, -40, r, 0, Math.PI * 2);
+      c.fillStyle = "#fcd9a8"; c.fill(); c.lineWidth = 5; c.strokeStyle = "#1c2433"; c.stroke();
+      c.beginPath(); c.arc(-r * 0.3, -40 - r * 0.35, 9 * p.ball, 0, Math.PI * 2);
+      c.fillStyle = "#fff"; c.fill(); c.lineWidth = 3.5; c.strokeStyle = "#1c2433"; c.stroke();
+      const lx = this.lookX * 3, ex = -r * 0.3 + lx, ey = -40 - r * 0.35;
+      c.fillStyle = "#1c2433"; c.beginPath(); c.arc(ex - 3, ey, 2.4, 0, 7); c.arc(ex + 3, ey, 2.4, 0, 7); c.fill();
+      c.strokeStyle = "#1c2433"; c.lineWidth = 3; c.beginPath(); c.arc(0, -40 + r * 0.4, 8, 0.2, Math.PI - 0.2); c.stroke();
+      c.restore(); return;
+    }
+    if (p.belly > 1) { c.beginPath(); c.arc(0, -32, 12 * p.belly, 0, Math.PI * 2); // panza inflándose
+      c.fillStyle = "rgba(250,204,21,.5)"; c.fill();
+      c.lineWidth = 3; c.strokeStyle = "#1c2433"; c.stroke(); }
+    const lL = p.legL || [-16, 46], lR = p.legR || [16, 46];
+    this.line(0, -32, lL[0], lL[1], "#1c2433"); this.line(0, -32, lR[0], lR[1], "#1c2433");
+    this.line(0, -74, 0, -32, "#1c2433", 7);
+    const aL = p.armL || [-24, -8], aR = p.armR || [24, -8];
+    this.line(0, -62, aL[0], aL[1], "#1c2433", 5); this.line(0, -62, aR[0], aR[1], "#1c2433", 5);
+    if (p.holdBelly) { this.line(0, -62, -14, -28, "#1c2433", 5); this.line(0, -62, 14, -28, "#1c2433", 5); } // se agarra la panza
+    const hy = p.headDrop || 0;
+    this.circle(0, -98 + hy, 21, "#fff", "#1c2433", 4.5); // cabeza cómic
+    // gorra dev / accesorios
+    if (p.hat === "party") {
+      c.fillStyle = "#ec4899";
+      c.beginPath(); c.moveTo(-12, -116 + hy); c.lineTo(0, -146 + hy); c.lineTo(12, -116 + hy); c.closePath(); c.fill();
+      c.lineWidth = 3; c.strokeStyle = "#1c2433"; c.stroke();
+      this.circle(0, -146 + hy, 4, "#facc15", "#1c2433", 2.5);
+    } else if (p.hat !== "none") {
+      c.fillStyle = "#7c3aed"; c.fillRect(-20, -124 + hy, 40, 12);
+      c.lineWidth = 3; c.strokeStyle = "#1c2433"; c.strokeRect(-20, -124 + hy, 40, 12);
+      c.fillStyle = "#fff"; c.font = "900 9px monospace"; c.textAlign = "center";
+      c.fillText("</>", 0, -115 + hy);
+    }
+    // ojos interactivos (siguen el último toque + parpadeo)
+    const ey = -100 + hy, eye = p.eye || "normal";
+    const blink = (performance.now() % 3600) < 140 && eye === "normal";
+    const lx = this.lookX * 4;
+    const dot = (dx, r, col) => { c.fillStyle = col; c.beginPath(); c.arc(dx + lx, ey, r, 0, 7); c.fill(); };
+    if (blink) {
+      c.strokeStyle = "#1c2433"; c.lineWidth = 3;
+      c.beginPath(); c.moveTo(-13, ey); c.lineTo(-3, ey); c.stroke();
+      c.beginPath(); c.moveTo(3, ey); c.lineTo(13, ey); c.stroke();
+    } else if (eye === "normal") {
+      this.circle(-8, ey, 6.5, "#fff", "#1c2433", 3); this.circle(8, ey, 6.5, "#fff", "#1c2433", 3);
+      dot(-8, 2.8, "#1c2433"); dot(8, 2.8, "#1c2433");
+    } else if (eye === "happy") {
+      c.strokeStyle = "#1c2433"; c.lineWidth = 3.5;
+      c.beginPath(); c.arc(-8 + lx, ey + 2, 5, Math.PI, 0); c.stroke();
+      c.beginPath(); c.arc(8 + lx, ey + 2, 5, Math.PI, 0); c.stroke();
+    } else if (eye === "XX") {
+      c.strokeStyle = "#dc2626"; c.lineWidth = 4;
+      [-8, 8].forEach((dx) => { c.beginPath();
+        c.moveTo(dx - 5, ey - 5); c.lineTo(dx + 5, ey + 5);
+        c.moveTo(dx + 5, ey - 5); c.lineTo(dx - 5, ey + 5); c.stroke(); });
+    } else if (eye === "spiral") {
+      const t = performance.now() / 180;
+      [-8, 8].forEach((dx, i) => { c.strokeStyle = "#a21caf"; c.lineWidth = 2.4; c.beginPath();
+        for (let a = 0; a < 12; a += 0.4) { const r = 1 + a;
+          const px = dx + Math.cos(a + t + i) * r, py = ey + Math.sin(a + t + i) * r;
+          if (a === 0) c.moveTo(px, py); else c.lineTo(px, py); }
+        c.stroke(); });
+    } else if (eye === "spark") { // chispas de cafeína
+      this.circle(-8, ey, 6, "#fef08a", "#1c2433", 3); this.circle(8, ey, 6, "#fef08a", "#1c2433", 3);
+      c.strokeStyle = "#facc15"; c.lineWidth = 2.5;
+      for (let i = 0; i < 4; i++) { const a = performance.now() / 120 + i * 1.7;
+        c.beginPath(); c.moveTo(-8 + Math.cos(a) * 8, ey + Math.sin(a) * 8);
+        c.lineTo(-8 + Math.cos(a) * 14, ey + Math.sin(a) * 14); c.stroke();
+        c.beginPath(); c.moveTo(8 + Math.cos(a + 1) * 8, ey + Math.sin(a + 1) * 8);
+        c.lineTo(8 + Math.cos(a + 1) * 14, ey + Math.sin(a + 1) * 14); c.stroke(); }
+      dot(-8, 2.4, "#1c2433"); dot(8, 2.4, "#1c2433");
+    } else if (eye === "dead") {
+      c.strokeStyle = "#64748b"; c.lineWidth = 3;
+      c.beginPath(); c.moveTo(-14, ey); c.lineTo(-2, ey); c.stroke();
+      c.beginPath(); c.moveTo(2, ey); c.lineTo(14, ey); c.stroke();
+    }
+    // boca cómic
+    c.strokeStyle = "#1c2433"; c.lineWidth = 3; c.beginPath();
+    if (p.mouth === "trauma") { c.fillStyle = "#7f1d1d"; c.beginPath(); c.ellipse(0, ey + 16, 6, 9, 0, 0, 7); c.fill(); c.stroke(); }
+    else if (p.mouth === "grin") { c.moveTo(-11, ey + 10); c.quadraticCurveTo(0, ey + 20, 11, ey + 10); }
+    else if (p.mouth === "sad") { c.arc(0, ey + 22, 7, Math.PI * 1.15, Math.PI * 1.85); }
+    else { c.moveTo(-8, ey + 12); c.quadraticCurveTo(0, ey + 16, 8, ey + 12); }
+    c.stroke();
+    if (p.stars) { const t = performance.now() / 280; // estrellitas girando
+      for (let i = 0; i < 3; i++) { const a = t + i * 2.09;
+        this.star(Math.cos(a) * 34, -128 + hy + Math.sin(a) * 10, 9); } }
+    if (p.pain) { // rayo rojo de dolor
+      c.strokeStyle = "#dc2626"; c.lineWidth = 4;
+      const j = Math.sin(performance.now() / 55) * 4;
+      c.beginPath(); c.moveTo(-26 + j, -52); c.lineTo(-14 + j, -38); c.lineTo(-26 + j, -24); c.lineTo(-14 + j, -10); c.stroke();
+      this.star(-30 + j, -58, 12, "#ef4444");
+    }
+    c.restore();
+  }
+
+  /* ---- ESCENAS CÓMICAS 3 s (t: 0→1) ---- */
+  scenes = {
+    // Saltarse comidas: rugido → rayo → agarra panza → tiembla → XX → desmayo
+    gastritis: (t, time) => {
+      if (t < 0.3) {
+        this.stick(180, 250, 1.0, { eye: "normal", mouth: "sad" });
+        this.txt("GRRRRR…", 180, 120, 15 + Math.sin(time / 90) * 3, "#7f1d1d", true);
+        this.txt("¡la panza ruge!", 180, 145, 12, "#7f1d1d", true);
+      } else if (t < 0.52) {
+        this.stick(180, 250, 1.0, { eye: "XX", pain: true, holdBelly: true, mouth: "trauma",
+          lean: Math.sin(time / 70) * 0.09 });
+        this.txt("¡AAAY!", 180, 110, 24, "#dc2626", true);
+      } else if (t < 0.72) {
+        const sh = Math.sin(time / 45) * 5;
+        this.stick(180 + sh, 250, 1.0, { eye: "XX", holdBelly: true, mouth: "trauma" });
+        this.speedLines(180, 230, 6, "#dc2626");
+      } else {
+        this.stick(180, 252, 1.0, { eye: "XX", faint: Math.min(1, (t - 0.72) / 0.28), stars: true, mouth: "trauma" });
+        this.star(90, 120, 16); this.txt("¡PUM!", 90, 155, 15, "#1c2433", true);
+      }
+    },
+    // Fast food: devora → inflado → BOLA rebotando por el cuarto
+    fatball: (t, time) => {
+      if (t < 0.3) {
+        const k = t / 0.3;
+        this.ctx.fillStyle = "#b45309"; this.ctx.fillRect(120, -70 + k * 220, 130, 60);
+        this.txt("🍕", 185, -35 + k * 220, 34);
+        this.stick(180, 252, 1.0, { eye: "happy", mouth: "grin" });
+        this.txt("¡ÑAM ÑAM ÑAM!", 180, 110, 16, "#92400e", true);
+      } else if (t < 0.55) {
+        const e = (t - 0.3) / 0.25, belly = 1 + e * 1.6;
+        this.stick(180, 252, 1.0, { belly: belly, eye: "happy", mouth: "grin", squash: [1 + e * 0.3, 1 - e * 0.15] });
+        this.txt("¡INFLÁNDOSE…!", 180, 105, 16, "#92400e", true);
+        if (Math.floor(e * 6) !== Math.floor((e - 0.04) * 6)) sfxBoing();
+      } else {
+        const bx = 180 + Math.sin(time / 160) * 95, by = 235 - Math.abs(Math.sin(time / 210)) * 70; // rebote
+        const sq = 1 + Math.sin(time / 105) * 0.12;
+        this.stick(bx, by, 1.0, { ball: 1.15, squash: [sq, 2 - sq] });
+        this.txt("¡BOING! ¡BOING!", 180, 100, 17, "#92400e", true);
+      }
+    },
+    // Cafeína: vibra extremo → chispas → cae seco
+    caffeine: (t, time) => {
+      if (t < 0.55) {
+        const v = 3 + t * 14; // vibración creciente
+        this.stick(180 + Math.sin(time / 18) * v, 250, 1.0, { eye: "spark", mouth: "grin" });
+        this.speedLines(190, 230, 8, "#a21caf");
+        this.txt("¡BRZZZT! ¡POWER!", 180, 105, 15 + t * 8, "#a21caf", true);
+      } else if (t < 0.75) {
+        this.stick(180, 250, 1.0, { eye: "dead", mouth: "sad", lean: (t - 0.55) * 2 });
+        this.txt("s-s-sin… batería…", 180, 110, 13, "#64748b", true);
+      } else {
+        this.stick(180, 255, 1.0, { eye: "dead", faint: Math.min(1, (t - 0.75) / 0.25), mouth: "sad" });
+        this.txt("💤 seco.", 260, 130, 15, "#475569", true);
+      }
+    },
+    // Hipnosis del scroll: espirales + cabeza que cae + cerebro que se apaga
+    doomscroll: (t) => {
+      this.stick(140, 250, 1.0, { eye: "spiral", headDrop: t * 12, armR: [42, -52],
+        mouth: t > 0.6 ? "trauma" : "sad" });
+      this.ctx.save(); this.ctx.shadowColor = "#e879f9"; this.ctx.shadowBlur = 22;
+      this.ctx.fillStyle = "#0f172a"; this.ctx.strokeStyle = "#e879f9"; this.ctx.lineWidth = 3;
+      this.ctx.fillRect(215, 160, 48, 84); this.ctx.strokeRect(215, 160, 48, 84); this.ctx.restore();
+      this.txt("📱 ∞", 239, 152, 13, "#a21caf", true);
+      const bat = 1 - t;
+      this.ctx.fillStyle = "#1c2433"; this.ctx.fillRect(60, 90, 110, 24);
+      this.ctx.fillStyle = bat > 0.5 ? "#22c55e" : "#dc2626"; this.ctx.fillRect(64, 94, 102 * bat, 16);
+      this.txt("🧠 " + Math.round(bat * 100) + "%", 115, 80, 12, "#1c2433", true);
+    },
+    // Éxito: come → aura dorada → flex + pose victoria
+    balanced: (t) => {
+      this.ctx.fillStyle = "#fff"; this.ctx.beginPath();
+      this.ctx.ellipse(265, 235, 52, 18, 0, 0, 7); this.ctx.fill();
+      this.ctx.lineWidth = 4; this.ctx.strokeStyle = "#1c2433"; this.ctx.stroke();
+      this.txt("🥗🍗", 265, 243, 22);
+      const flex = t > 0.5, eat = Math.sin(t * Math.PI * 7) * 4;
+      this.stick(140, 252, 1.05, { eye: "happy", mouth: "grin", aura: t > 0.3 ? (flex ? "#facc15" : "#22c55e") : null,
+        headDrop: t < 0.5 ? (eat > 0 ? eat : 0) : 0, hat: "party",
+        armL: flex ? [-42, -100] : [-24, -8], armR: flex ? [42, -100] : [30, -14] });
+      if (flex) this.txt("¡PODER!", 140, 92, 20, "#b45309", true);
+      else if (t > 0.3) this.txt("¡ñam! ¡ñam!", 140, 100, 13, "#166534", true);
+    },
+    zombie: (t, time) => {
+      this.stick(150 + Math.sin(time / 400) * 6, 250, 1.0, { green: true,
+        eye: t > 0.4 ? "dead" : "normal", mouth: "sad", lean: 0.14, armL: [-38, -30], armR: [40, -20] });
+      if (t > 0.4) this.txt("🧟 ¡ZOMBI!", 180, 105, 20, "#166534", true);
+      else this.txt("bostezo… x400", 180, 110, 13, "#475569", true);
+    },
+    recover: (t, time) => {
+      const run = Math.sin(time / 130) * 11;
+      this.stick(180, 252, 1.05, { eye: "happy", mouth: "grin", aura: t > 0.3 ? "#0284c7" : null,
+        legL: [-17, 42 + run], legR: [17, 42 - run], armL: [28, -58], armR: [-28, -58] });
+      if (t > 0.5) this.txt("¡RECARGANDO… 100%!", 180, 100, 15, "#0284c7", true);
+    },
+    robot: (t, time) => {
+      this.ctx.fillStyle = "#475569"; this.ctx.fillRect(40, 130, 76, 92);
+      this.ctx.fillStyle = "#22d3ee"; this.ctx.fillRect(52, 146, 52, 30);
+      this.txt("IA", 78, 168, 14, "#0f172a");
+      if (t > 0.3) { this.ctx.strokeStyle = "#e879f9"; this.ctx.lineWidth = 4; this.ctx.setLineDash([9, 6]);
+        this.ctx.beginPath(); this.ctx.moveTo(116, 160); this.ctx.lineTo(200, 200); this.ctx.stroke(); this.ctx.setLineDash([]);
+        this.txt("¡500 KCAL!", 160, 175, 12, "#a21caf", true); }
+      if (t < 0.55) { this.stick(250, 252, 0.95, { mouth: "sad" }); this.txt("🥬", 250, 190, 24); }
+      else this.stick(250 + Math.sin(time / 50) * 5, 252, 0.95,
+        { eye: "XX", faint: Math.min(1, (t - 0.55) / 0.3), mouth: "trauma", stars: t > 0.8 });
+    },
+    sleepWin: (t) => {
+      this.ctx.fillStyle = "#312e81"; this.ctx.fillRect(30, 200, 300, 60);
+      this.stick(180, 235, 1.0, { eye: "happy", mouth: "grin", hat: "none" });
+      this.txt("Z", 225, 130, 16, "#64748b", true); this.txt("Z", 242, 105, 24, "#475569", true);
+      if (t > 0.5) this.txt("¡A MIMIR! 😴", 180, 90, 17, "#312e81", true);
+    },
+    snackVoid: (t, time) => { // refinados vacíos: come aire y sigue con hambre
+      if (t < 0.5) {
+        this.stick(150, 252, 1.0, { eye: "happy", mouth: "grin", armR: [34, -70 + Math.sin(time / 120) * 8] });
+        this.txt("🍘 ¡ñam! ¡ñam! ¡ñam!", 180, 110, 15, "#92400e", true);
+        this.txt("¿y lo llenador?…", 180, 135, 12, "#64748b", true);
+      } else {
+        this.stick(150, 252, 1.0, { eye: "normal", mouth: "sad", headDrop: 8 });
+        this.txt("GRRR… ¡sigo con hambre!", 180, 110, 14, "#7f1d1d", true);
+      }
+    },
+    pills: (t, time) => { // pastillas sin receta: mareo y caída atontada
+      if (t < 0.55) {
+        this.stick(180 + Math.sin(time / 90) * 6, 252, 1.0, { eye: "spiral", mouth: "sad", lean: Math.sin(time / 200) * 0.12 });
+        this.txt("💊 todo da vueltas…", 180, 108, 14, "#6d28d9", true);
+      } else {
+        this.stick(180, 254, 1.0, { eye: "XX", faint: Math.min(1, (t - 0.55) / 0.3), mouth: "sad", stars: t > 0.8 });
+        this.txt("¡PLAF! atontado.", 180, 105, 14, "#6d28d9", true);
+      }
+    },
+    paralysis: (t, time) => {
+      this.ctx.save(); this.ctx.translate(Math.sin(time / 55) * 6, 0);
+      this.stick(180, 252, 1.0, { eye: "XX", mouth: "trauma" }); this.ctx.restore();
+      this.txt("¡8… 0… TARDE!", 180, 105, 18, "#dc2626", true);
+    },
+  };
+
+  startIdle() {
+    this.cancel();
+    const loop = () => {
+      this.idleT += 0.03;
+      const r = ROUNDS[Math.min(S.roundIndex, ROUNDS.length - 1)];
+      this.room(r.room, r.day);
+      this.stick(180, 252, 1.05, { headDrop: Math.sin(this.idleT) * 2.5,
+        armL: [-25 + Math.sin(this.idleT) * 3, -8], armR: [25 - Math.sin(this.idleT) * 3, -8] });
+      this.txt("▼ toca una foto ▼", 180, 322, 12, "#1c2433", true);
+      this.raf = requestAnimationFrame(loop);
+    };
+    loop();
+  }
+
+  /** Cinemática 3 s + sello gigante. */
+  play(sceneId, outcome) {
+    this.cancel();
+    const DUR = 3000, STAMP_AT = 2280, t0 = performance.now();
+    const r = ROUNDS[Math.min(S.roundIndex, ROUNDS.length - 1)];
+    return new Promise((resolve) => {
+      const frame = (now) => {
+        const el = now - t0, t = Math.min(1, el / DUR);
+        this.clear(); this.room(r.room, r.day);
+        (this.scenes[sceneId] || this.scenes.paralysis)(t, el);
+        if (el >= STAMP_AT) { // sello gigante estilo Stick Story
+          const k = Math.min(1, (el - STAMP_AT) / 320), c = this.ctx;
+          const bad = outcome.fail, col = bad ? "#dc2626" : "#16a34a";
+          c.save();
+          if (bad) c.translate(Math.sin(el / 38) * 5, 0);
+          c.fillStyle = bad ? "rgba(220,38,38,.13)" : "rgba(22,163,74,.13)";
+          c.fillRect(0, 0, this.W, this.H);
+          if (!bad) for (let i = 0; i < 18; i++) { const a = el / 480 + i * 0.35;
+            this.star(180 + Math.cos(a) * (60 + k * 100), 165 + Math.sin(a) * (50 + k * 75), 8, "#fde047"); }
+          else this.star(180, 165, 60 + k * 26, "rgba(220,38,38,.35)");
+          c.save(); c.translate(180, 165); c.rotate(-0.1);
+          const sc = 0.55 + k * 0.45; c.scale(sc, sc); c.globalAlpha = Math.min(1, k * 1.4);
+          c.fillStyle = "#fdf6e3"; c.strokeStyle = col; c.lineWidth = 9;
+          const lines = outcome.stamp.split("\n");
+          const hh = lines.length * 34 + 36;
+          c.beginPath(); c.rect(-168, -hh / 2, 336, hh); c.fill(); c.stroke();
+          c.fillStyle = col; c.textAlign = "center";
+          lines.forEach((ln, i) => { c.font = '900 27px "Comic Sans MS", cursive, sans-serif';
+            c.fillText(ln, 0, -hh / 2 + 44 + i * 34); });
+          c.restore(); c.restore();
+        }
+        if (t < 1) this.raf = requestAnimationFrame(frame);
+        else resolve();
+      };
+      this.raf = requestAnimationFrame(frame);
+    });
+  }
+}
+const animator = new Animator($("gameCanvas"));
+// ojos siguen el último toque (interactividad)
+$("gameCanvas").addEventListener("pointerdown", (e) => {
+  const r = $("gameCanvas").getBoundingClientRect();
+  animator.lookX = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width - 0.5) * 2));
+});
+
+// ---------- 6. TIMER 8 s (presión de tiempo) ----------
+let timerInt = null, timeLeft = 8, busy = false;
+function stopTimer() { if (timerInt) clearInterval(timerInt); timerInt = null; }
+function startTimer() {
+  stopTimer(); timeLeft = 8; paintTimer();
+  timerInt = setInterval(() => {
+    timeLeft -= 0.1; paintTimer();
+    if (timeLeft <= 0) { stopTimer(); choose({ ...TIMEOUT, auto: true }); }
+  }, 100);
+}
+function paintTimer() {
+  const v = Math.max(0, timeLeft);
+  const n = $("timerNum");
+  n.textContent = Math.ceil(v);
+  n.classList.toggle("danger", v <= 3);
+}
+
+// ---------- 7. RENDER: banderines + polaroids TÍTULO ENGAÑOSO + ÍCONO (cero spoilers) ----------
+function renderHUD() {
+  // corazones: ❤️ vivas, 🖤 perdidas; el recién roto tiembla
+  let hearts = "";
+  for (let i = 0; i < 3; i++) hearts += `<span class="${i < S.lives ? "" : "lost"}">${i < S.lives ? "❤️" : "🖤"}</span>`;
+  const h = $("hearts");
+  h.innerHTML = hearts;
+  if (S.lives < prevLives) { h.classList.remove("break"); void h.offsetWidth; h.classList.add("break"); }
+  prevLives = S.lives;
+  $("hudLvl").textContent = Math.min(S.roundIndex + 1, 8) + "/8";
+  $("hudWeight").textContent = S.weight.toFixed(1);
+  $("hudErr").textContent = S.errors + " ERR";
+  const r = ROUNDS[Math.min(S.roundIndex, ROUNDS.length - 1)];
+  $("tapeTitle").textContent = r.tape;
+  $("sceneLabel").textContent = r.scene + " · " + r.clock;
+  $("dots").innerHTML = ROUNDS.map((_, i) =>
+    `<span class="${i < S.roundIndex ? "done" : i === S.roundIndex ? "now" : ""}"></span>`).join("");
+}
+function renderRound() {
+  const r = ROUNDS[S.roundIndex];
+  if (!r) return;
+  $("narrativeText").textContent = r.narrative;
+  const box = $("polas");
+  box.innerHTML = ""; box.style.display = "flex";
+  $("optsHidden").style.display = "none";
+  $("btnContinue").classList.remove("show");
+  r.options.forEach((opt) => { // polaroid: título tramposo + ícono, cero HP/errores
+    const b = document.createElement("button");
+    b.className = "pola"; b.setAttribute("aria-label", opt.name);
+    b.innerHTML = `<span class="photo">${opt.icon}</span><span class="cap">${opt.label}</span>`;
+    b.onclick = (e) => {
+      const rc = $("gameCanvas").getBoundingClientRect();
+      animator.lookX = Math.max(-1, Math.min(1, ((e.clientX - rc.left) / rc.width - 0.5) * 2));
+      choose(opt);
+    };
+    box.appendChild(b);
+  });
+}
+
+// ---------- 8. FLUJO: polaroid → 3 s cómico → sello → CONTINUAR ----------
+let pending = null;
+async function choose(opt) {
+  if (busy) return;
+  busy = true; stopTimer(); pending = opt;
+  const impact = applyChoice(opt);
+  renderHUD();
+  if (impact.lost > 0) { // corazón roto: shake + sonido grave
+    const a = $("app"); a.classList.remove("shake"); void a.offsetWidth; a.classList.add("shake");
+    beep(160, 0.25, "sawtooth", 0.07);
+  }
+  $("polas").style.display = "none"; // tarjetas se ocultan
+  $("optsHidden").style.display = "block";
+  $("panel").classList.add("cut");
+  $("narrativeText").textContent = (opt.auto ? "⏱️ ¡Tiempo agotado! " : "🎬 ") + opt.bio;
+  beep(500, 0.1);
+  await animator.play(opt.scene, { fail: opt.fail, stamp: opt.stamp }); // 3 s + sello
+  if (opt.fail) sfxFail(); else sfxPop();
+  if (S.lives <= 0) { showEnd(); return; } // ¡sin vidas! game over inmediato, sin continuar
+  $("optsHidden").style.display = "none";
+  $("btnContinue").classList.add("show"); // continuar manual
+}
+function next() {
+  S.roundIndex++;
+  pending = null;
+  $("panel").classList.remove("cut");
+  $("btnContinue").classList.remove("show");
+  if (S.roundIndex >= ROUNDS.length || S.lives <= 0) { showEnd(); return; }
+  busy = false;
+  animator.startIdle();
+  renderHUD(); renderRound(); startTimer();
+}
+
+// ---------- 9. PODIO / RESULTADOS: vidas + errores + peso ----------
+function showEnd() {
+  stopTimer(); renderHUD(); busy = false;
+  const e = S.errors;
+  let emoji, badge, color, desc;
+  if (S.lives <= 0) {
+    emoji = "💀"; badge = "GAME OVER 💀 - HOSPITALIZADO POR GASTRITIS/DESNUTRICIÓN"; color = "#dc2626";
+    desc = "¡Perdiste las 3 vidas! Dev termina hospitalizado por gastritis y desnutrición. ¡Reintenta la fuga con decisiones sanas!";
+  } else if (S.lives === 3 && e === 0) {
+    emoji = "🏆"; badge = "MEDALLA DE ORO 🏆 ¡FUGA PERFECTA!"; color = "#b45309";
+    desc = "¡Cero errores en 8 rondas con 3 vidas intactas! Dev escapa de la prisión. ¡LEYENDA!";
+  } else if (S.lives === 2) {
+    emoji = "🥈"; badge = "MEDALLA DE PLATA 🥈 ¡CASI LIBRE!"; color = "#64748b";
+    desc = "¡2 vidas sobrevivientes y " + e + " error(es)! El túnel está casi listo… ¡reintenta el oro!";
+  } else {
+    emoji = "🥉"; badge = "MEDALLA DE BRONCE 🥉 ¡SOBREVIVIENTE!"; color = "#92400e";
+    desc = "¡1 vida y " + e + " errores! Saliste gateando, pero saliste. ¡Ve por más vidas!";
+  }
+  $("endEmoji").textContent = emoji;
+  $("endBadge").textContent = badge;
+  $("endBadge").style.color = color;
+  $("endDesc").textContent = desc;
+  $("endStats").innerHTML =
+    `<div class="cell">❤️ VIDAS<span class="big">${"❤️".repeat(S.lives)}${"🖤".repeat(3 - S.lives)}</span></div>` +
+    `<div class="cell">⚠️ ERRORES<span class="big">${S.errors}</span></div>` +
+    `<div class="cell">⚖️ PESO<span class="big">${S.weight.toFixed(1)} kg</span></div>`;
+  $("endScreen").classList.add("show");
+  (S.lives === 3 && e === 0 ? sfxPop : sfxFail)();
+}
+function reset() {
+  S = { ...INITIAL };
+  prevLives = 3;
+  pending = null;
+  $("endScreen").classList.remove("show");
+  $("panel").classList.remove("cut");
+  busy = false;
+  animator.startIdle();
+  renderHUD(); renderRound(); startTimer();
+}
+
+// ---------- 10. INIT ----------
+$("btnContinue").addEventListener("click", next);
+$("btnRetry").addEventListener("click", reset);
+renderHUD(); renderRound(); startTimer();
+</script>
+</body>
+</html>

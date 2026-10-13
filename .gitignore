@@ -1,0 +1,9 @@
+# dependencias
+node_modules/
+
+# build
+dist/
+
+# entorno local (credenciales Supabase: nunca subir)
+.env.local
+.env.*.local
