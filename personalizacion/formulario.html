@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Personalización del proyecto · Los pitufos del señor</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #141b2e; color: #fdf6e3; font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+    padding: 16px; display: flex; justify-content: center; }
+  #box { width: 100%; max-width: 560px; background: #fdf6e3; color: #1c2433;
+    border: 4px solid #000; border-radius: 12px; padding: 22px 18px; box-shadow: 5px 5px 0 #000; }
+  h1 { font-size: 20px; text-align: center; }
+  .sub { text-align: center; font-size: 13px; margin: 4px 0 14px; opacity: .75; }
+  label { display: block; font-size: 13px; font-weight: 800; margin: 14px 0 4px; }
+  label small { display: block; font-weight: 400; opacity: .7; margin-top: 2px; }
+  input[type="text"], textarea {
+    width: 100%; padding: 10px 12px; font-size: 15px; font-family: inherit; color: #1c2433;
+    background: #fff; border: 3px solid #1c2433; border-radius: 8px; }
+  input:focus, textarea:focus { outline: 3px solid #22d3ee; }
+  textarea { min-height: 90px; resize: vertical; }
+  fieldset { border: 3px solid #1c2433; border-radius: 8px; padding: 10px 12px; margin-top: 14px; }
+  legend { font-size: 13px; font-weight: 800; padding: 0 6px; }
+  fieldset label { font-size: 14px; font-weight: 400; margin: 6px 0; display: flex; gap: 8px; align-items: center; }
+  fieldset input[type="checkbox"] { width: 18px; height: 18px; accent-color: #16a34a; }
+  button { width: 100%; margin-top: 18px; padding: 15px; font-size: 16px; font-weight: 900;
+    letter-spacing: 1px; color: #fff; background: #16a34a; border: 4px solid #1c2433;
+    border-radius: 10px; box-shadow: 4px 4px 0 rgba(28,36,51,.6); cursor: pointer; font-family: inherit; }
+  button:active { transform: scale(.97); }
+  .foot { text-align: center; font-size: 11px; margin-top: 12px; opacity: .6; }
+</style>
+</head>
+<body>
+<div id="box">
+  <h1>Personalización del proyecto</h1>
+  <p class="sub">Juego Stick Story · completa tu líder y envía. Solo cambian las <b>letras</b> del celular y del panel admin.</p>
+  <form action="/guardar" method="POST">
+    <label>1. Nombre oficial del grupo
+      <small>Actual: Los pitufos del señor. Si es otro, escríbelo.</small>
+      <input type="text" name="nombre_grupo" value="Los pitufos del señor" maxlength="60" />
+    </label>
+    <label>2. Número o letra del grupo
+      <input type="text" name="numero_grupo" value="Grupo 2" maxlength="20" />
+    </label>
+    <label>3. Alias del programador principal
+      <input type="text" name="dev_alias" value="Yorlxx" maxlength="30" />
+    </label>
+    <label>4. Nombre real del programador <small>(vacío = no se muestra)</small>
+      <input type="text" name="dev_nombre" maxlength="60" placeholder="Ej. Yorwin ..." />
+    </label>
+    <label>5. Integrantes del grupo <small>(uno por línea; alias entre paréntesis)</small>
+      <textarea name="integrantes" placeholder="Ana Pérez&#10;Luis Gómez (alias)"></textarea>
+    </label>
+    <label>6. Curso / asignatura <small>(vacío = no se muestra)</small>
+      <input type="text" name="curso" maxlength="80" placeholder="Ej. Desarrollo de Aplicaciones Web" />
+    </label>
+    <label>7. Institución, ciclo y año <small>(vacío = no se muestra)</small>
+      <input type="text" name="institucion" maxlength="80" placeholder="Ej. UPeU, ciclo III, 2026" />
+    </label>
+    <label>8. Docente <small>(vacío = no se menciona; el proyecto es de ustedes)</small>
+      <input type="text" name="docente" maxlength="80" placeholder="" />
+    </label>
+    <label>9. Lema o frase del grupo <small>(opcional)</small>
+      <input type="text" name="lema" maxlength="120" placeholder="Ej. Si falla el código, no falla el equipo" />
+    </label>
+    <label>10a. Título en el celular
+      <input type="text" name="titulo_celular" maxlength="90" value="Dev Stick · Los pitufos del señor (Grupo 2) · Dev Yorlxx" />
+    </label>
+    <label>10b. Título en el panel admin
+      <input type="text" name="titulo_admin" maxlength="90" value="Tablero de Control - Dev Yorlxx - UPeU · Los pitufos del señor (G2)" />
+    </label>
+    <fieldset>
+      <legend>11. ¿Dónde mostrar los créditos? (puedes marcar varias)</legend>
+      <label><input type="checkbox" name="donde" value="pie_celular" checked /> Pie del juego en el celular</label>
+      <label><input type="checkbox" name="donde" value="podio_celular" /> Pantalla final / podio del celular</label>
+      <label><input type="checkbox" name="donde" value="encabezado_admin" checked /> Encabezado del panel admin</label>
+      <label><input type="checkbox" name="donde" value="pie_admin" checked /> Pie del panel admin</label>
+      <label><input type="checkbox" name="donde" value="registro_celular" /> Pantalla de registro del celular</label>
+      <label><input type="checkbox" name="donde" value="readme" checked /> README del proyecto</label>
+    </fieldset>
+    <label>12. Contacto del dev <small>(GitHub / correo; vacío = no se muestra)</small>
+      <input type="text" name="contacto" maxlength="80" placeholder="" />
+    </label>
+    <label>13. Extras en letras <small>(chistes internos, nombres de rondas, lo que sea)</small>
+      <textarea name="extras" placeholder="Escríbelos aquí..."></textarea>
+    </label>
+    <button type="submit">ENVIAR RESPUESTAS ▶</button>
+    <p class="foot">Al enviar, tus respuestas se guardan para aplicarlas al juego.</p>
+  </form>
+</div>
+</body>
+</html>

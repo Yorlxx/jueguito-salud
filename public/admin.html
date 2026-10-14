@@ -3,39 +3,86 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>🎮 Tablero de Control - Dev Stick Competition</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>" />
+<title>Tablero de Control - Hecho por el Grupo 2 Wasaaa</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M7 7.5h10a5 5 0 0 1 5 5c0 2.7-2 4.8-3.9 4.8-1.4 0-2.3-.8-3-2H8.9c-.7 1.2-1.6 2-3 2C4 17.3 2 15.2 2 12.5a5 5 0 0 1 5-5z' fill='none' stroke='%2322d3ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: #141b2e; color: #fdf6e3; min-height: 100vh;
-    font-family: "Comic Sans MS", "Chalkboard SE", cursive, sans-serif; padding: 18px;
+    font-family: "Nunito", "Comic Sans MS", "Chalkboard SE", cursive, sans-serif; padding: 18px;
     background-image: radial-gradient(rgba(255,255,255,.06) 1.5px, transparent 1.6px);
     background-size: 20px 20px; }
   #wrap { max-width: 1200px; margin: 0 auto; }
   h1 { font-size: clamp(20px, 4vw, 30px); letter-spacing: 1px; text-align: center;
     text-shadow: 3px 3px 0 #000; }
-  /* --- Header resumen global --- */
+  .teamsub { text-align: center; font-size: 13px; font-weight: 800; opacity: .85; margin-top: 2px; }
+  /* --- Sala activa: PIN + QR --- */
+  #roomCard { display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap;
+    margin-top: 14px; background: #fdf6e3; color: #1c2433; border: 4px solid #000; border-radius: 12px;
+    padding: 14px 18px; box-shadow: 5px 5px 0 #000; }
+  #roomQr { width: 150px; height: 150px; background: #fff; border: 3px solid #1c2433; border-radius: 8px; }
+  #roomQr.hide { display: none; }
+  #roomInfo { text-align: center; }
+  #roomInfo small { font-size: 11px; font-weight: 900; letter-spacing: 2px; opacity: .7; }
+  #roomPin { font-size: 56px; font-weight: 900; letter-spacing: 8px; line-height: 1.1; }
+  #roomUrl { font-size: 12px; font-weight: 700; word-break: break-all; max-width: 340px; }
+  /* --- Resumen + vista --- */
   #summary { display: flex; gap: 10px; align-items: stretch; justify-content: center;
     flex-wrap: wrap; margin-top: 12px; }
   .pill { background: #fdf6e3; color: #1c2433; border: 3px solid #000; border-radius: 10px;
     padding: 8px 16px; font-weight: 900; box-shadow: 3px 3px 0 #000; text-align: center; }
   .pill small { display: block; font-size: 10px; letter-spacing: 1px; opacity: .7; }
   .pill b { font-size: 20px; }
+  #viewToggle { display: flex; gap: 8px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+  #viewToggle button { padding: 10px 18px; font-family: inherit; font-size: 14px; font-weight: 900;
+    background: #fdf6e3; color: #1c2433; border: 3px solid #000; border-radius: 10px;
+    box-shadow: 3px 3px 0 #000; cursor: pointer; opacity: .65; }
+  #viewToggle button.on { opacity: 1; background: #22d3ee; }
+  #viewToggle button:active { transform: scale(.95); }
+  /* --- Controles --- */
   #controls { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-  #controls button { flex: 1; min-width: 180px; padding: 14px; font-family: inherit; font-size: 15px;
+  #controls button { flex: 1; min-width: 160px; padding: 14px; font-family: inherit; font-size: 15px;
     font-weight: 900; letter-spacing: 1px; border: 4px solid #000; border-radius: 10px;
     box-shadow: 4px 4px 0 #000; cursor: pointer; }
   #controls button:active { transform: scale(.96); }
   #controls button:disabled { filter: grayscale(1); opacity: .5; cursor: not-allowed; }
+  #btnNew { background: #a78bfa; color: #1c2433; }
   #btnStart { background: #22c55e; color: #fff; }
-  #btnNext { background: #facc15; color: #1c2433; }
+  #btnPause { background: #fb923c; color: #1c2433; }
+  #btnEnd { background: #7c3aed; color: #fff; }
   #btnReset { background: #ef4444; color: #fff; }
+  /* --- Gestor de salas --- */
+  #roomTools { display: flex; justify-content: flex-end; margin: 8px 0; }
+  #btnCleanEmpty { padding: 9px 14px; font-family: inherit; font-size: 13px; font-weight: 900;
+    background: #fdf6e3; color: #1c2433; border: 3px solid #000; border-radius: 10px;
+    box-shadow: 3px 3px 0 #000; cursor: pointer; }
+  #btnCleanEmpty:active { transform: scale(.95); }
+  #btnCleanEmpty:disabled { filter: grayscale(1); opacity: .5; }
+  #roomList { display: flex; flex-direction: column; gap: 8px; }
+  .roomrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: #fdf6e3; color: #1c2433; border: 3px solid #000; border-radius: 10px;
+    padding: 8px 12px; font-weight: 900; font-size: 13px; box-shadow: 3px 3px 0 #000; }
+  .roomrow.cur { outline: 3px solid #22d3ee; }
+  .roomrow.empty { opacity: .75; }
+  .roomrow .rpin { font-size: 17px; letter-spacing: 2px; }
+  .roomrow .rcount { background: #1c2433; color: #fff; border-radius: 6px; padding: 2px 8px; font-size: 12px; }
+  .roomrow .rwhen { opacity: .6; font-size: 12px; }
+  .roomrow .racts { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+  .roomrow .racts em { font-size: 12px; color: #15803d; }
+  .roomrow button { padding: 6px 10px; font-family: inherit; font-size: 12px; font-weight: 900;
+    border: 2.5px solid #000; border-radius: 8px; cursor: pointer; box-shadow: 2px 2px 0 #000; }
+  .roomrow button:active { transform: scale(.93); }
+  .roomrow button[data-act="open"] { background: #22d3ee; color: #1c2433; }
+  .roomrow button[data-act="close"] { background: #fff; color: #dc2626; }
   #warn { display: none; margin-top: 12px; background: #7f1d1d; border: 3px solid #fca5a5;
     border-radius: 10px; padding: 10px 14px; font-weight: 700; }
   #warn.show { display: block; }
-  /* --- Cuadrícula de equipos --- */
+  /* --- Carriles de equipos (canvas) --- */
   h2 { margin: 18px 0 8px; font-size: 20px; text-shadow: 2px 2px 0 #000; }
   #teams { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  #teams.hide, #rowsList.hide { display: none; }
   .team { background: #fdf6e3; color: #1c2433; border: 4px solid #000; border-radius: 10px;
     box-shadow: 4px 4px 0 #000; overflow: hidden; }
   .team.off { filter: grayscale(1); opacity: .55; }
@@ -56,6 +103,31 @@
   .team.dead .prog .fill { background: linear-gradient(90deg, #ef4444, #7f1d1d); }
   .tstats { display: flex; justify-content: space-between; padding: 6px 10px 8px;
     font-weight: 900; font-size: 13px; }
+  /* --- Vista individual densa (Quizizz) --- */
+  #rowsList { display: flex; flex-direction: column; gap: 8px; }
+  .rowp { display: grid; grid-template-columns: 44px 1fr auto; gap: 4px 12px; align-items: center;
+    background: #fdf6e3; color: #1c2433; border: 3px solid #000; border-radius: 10px;
+    padding: 8px 12px; box-shadow: 3px 3px 0 #000; will-change: transform; }
+  .rowp .pos { font-size: 22px; font-weight: 900; }
+  .rowp .nm { font-weight: 900; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rowp .meta { grid-column: 2 / 4; display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 800; }
+  .rowp .bar { flex: 1; height: 10px; border: 2px solid #1c2433; border-radius: 99px;
+    background: #fff; overflow: hidden; }
+  .rowp .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #22d3ee, #a78bfa);
+    transition: width .6s; }
+  .rowp .badge { font-size: 11px; font-weight: 900; background: #1c2433; color: #fff;
+    border-radius: 6px; padding: 2px 8px; white-space: nowrap; }
+  .rowp.dead { border-color: #dc2626; }
+  .rowp.dead .bar i { background: linear-gradient(90deg, #ef4444, #7f1d1d); }
+  /* --- Podio final --- */
+  #podium { display: none; margin-top: 14px; }
+  #podium.show { display: block; }
+  #podiumCards { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .pdc { background: #fdf6e3; color: #1c2433; border: 4px solid #000; border-radius: 12px;
+    padding: 14px 22px; text-align: center; box-shadow: 4px 4px 0 #000; min-width: 170px; }
+  .pdc .med { font-size: 46px; }
+  .pdc .pn { font-weight: 900; font-size: 16px; margin-top: 4px; }
+  .pdc .ps { font-size: 12px; font-weight: 800; margin-top: 2px; }
   /* --- Leaderboard --- */
   table { width: 100%; border-collapse: collapse; background: #fdf6e3; color: #1c2433;
     border: 4px solid #000; box-shadow: 4px 4px 0 #000; font-size: 14px; }
@@ -63,37 +135,80 @@
   th { background: #1c2433; color: #fde047; font-size: 12px; letter-spacing: 1px; }
   tr.leader td { background: #fef9c3; }
   footer { margin-top: 14px; text-align: center; font-size: 12px; opacity: .7; }
+  /* --- Iconos vectoriales SVG --- */
+  .ic { width: 1.15em; height: 1.15em; flex: none; vertical-align: -0.2em; }
+  [data-ic] { display: inline-flex; align-items: center; justify-content: center; }
+  .dot { display: inline-block; width: .7em; height: .7em; border-radius: 50%; background: #9ca3af; margin-right: .35em; }
+  .dot.ok { background: #22c55e; } .dot.warn { background: #facc15; }
+  .rank { display: inline-flex; align-items: center; justify-content: center; width: 1.7em; height: 1.7em;
+    border-radius: 50%; background: #475569; color: #fff; font-size: .85em; }
+  .rank.r1 { background: #b45309; } .rank.r2 { background: #64748b; } .rank.r3 { background: #92400e; }
+  .pdc .med .ic { width: 46px; height: 46px; }
+  .pdc .med.gold { color: #b45309; } .pdc .med.silver { color: #64748b; } .pdc .med.bronze { color: #92400e; }
+  .lv, .ps { color: #b91c1c; }
+  .lv .lost, .rowp .lost { color: #9ca3af; }
+  th .ic, .badge .ic, .st .ic, .rcount .ic, .rpin .ic { width: 1.1em; height: 1.1em; }
 </style>
 </head>
 <body>
 <div id="wrap">
-  <h1>🎮 TABLERO DE CONTROL - DEV STICK COMPETITION</h1>
+  <h1> TABLERO DE CONTROL - DEV Yorlxx - UPeU</h1>
+  <p class="teamsub"><i data-ic="spark"></i> Los pitufos del señor · Grupo 2 · Dev: Yorlxx (Jhoel)</p>
+
+  <div id="roomCard">
+    <img id="roomQr" class="hide" alt="QR para unirse a la sala" />
+    <div id="roomInfo">
+      <small><i data-ic="key"></i> PIN DE LA SALA</small>
+      <div id="roomPin">––––––</div>
+      <div id="roomUrl"></div>
+    </div>
+  </div>
+
+  <h2><i data-ic="grid"></i> SALAS <small style="font-size:12px">(revisa y cierra las que queden vacías)</small></h2>
+  <div id="roomTools">
+    <button id="btnCleanEmpty" type="button"><i data-ic="trash"></i> CERRAR SALAS VACÍAS</button>
+  </div>
+  <div id="roomList"></div>
 
   <div id="summary">
-    <div class="pill"><small>👥 GRUPOS CONECTADOS</small><b id="sumGroups">0/4</b></div>
-    <div class="pill"><small>🕹️ RONDA ACTUAL</small><b id="sumRound">–/8</b></div>
-    <div class="pill"><small>📡 ESTADO</small><b id="sumStatus">LOBBY</b></div>
+    <div class="pill"><small><i data-ic="users"></i> CONECTADOS</small><b id="sumGroups">0</b></div>
+    <div class="pill"><small><i data-ic="bolt"></i> RONDA LÍDER</small><b id="sumRound">–/8</b></div>
+    <div class="pill"><small><i data-ic="wifi"></i> ESTADO</small><b id="sumStatus">–</b></div>
+  </div>
+
+  <div id="viewToggle">
+    <button id="viewAuto" type="button" class="on"><i data-ic="spark"></i> AUTO</button>
+    <button id="viewTeams" type="button"><i data-ic="users"></i> MODO GRUPOS</button>
+    <button id="viewRows" type="button"><i data-ic="user"></i> MODO INDIVIDUAL</button>
   </div>
 
   <div id="controls">
-    <button id="btnStart" type="button">🚀 INICIAR</button>
-    <button id="btnNext" type="button">▶️ SIGUIENTE RONDA</button>
-    <button id="btnReset" type="button">🔄 REINICIAR</button>
+    <button id="btnNew" type="button"><i data-ic="spark"></i> CREAR NUEVA SALA</button>
+    <button id="btnStart" type="button"><i data-ic="rocket"></i> INICIAR PARTIDA</button>
+    <button id="btnPause" type="button"><i data-ic="pause"></i> PAUSAR</button>
+    <button id="btnEnd" type="button"><i data-ic="flag"></i> FINALIZAR PARTIDA</button>
+    <button id="btnReset" type="button"><i data-ic="reset"></i> REINICIAR</button>
   </div>
 
-  <div id="warn">⚠️ Supabase sin configurar: edita <code>public/js/core/supabaseClient.js</code> con tu URL + anon key y ejecuta <code>database_schema.sql</code>. El tablero cobra vida al instante.</div>
+  <div id="warn"><i data-ic="alert"></i> Supabase sin configurar: crea <code>.env.local</code> (ver <code>.env.example</code>) con tu URL + anon key y ejecuta <code>database_schema.sql</code>. El tablero cobra vida al instante.</div>
 
-  <h2>🛤️ CARRILES DE EQUIPOS</h2>
+  <div id="podium">
+    <h2><i data-ic="trophy"></i> PODIO FINAL</h2>
+    <div id="podiumCards"></div>
+  </div>
+
+  <h2><i data-ic="flag"></i> CARRILES DE EQUIPOS</h2>
   <section id="teams" aria-label="Equipos en paralelo"></section>
+  <section id="rowsList" class="hide" aria-label="Vista individual"></section>
 
-  <h2>🏆 LEADERBOARD EN VIVO <small style="font-size:12px">(menos errores → más vidas → menor tiempo)</small></h2>
+  <h2><i data-ic="trophy"></i> LEADERBOARD EN VIVO <small style="font-size:12px">(puntos → errores → ronda → tiempo)</small></h2>
   <table>
-    <thead><tr><th>#</th><th>GRUPO</th><th>❤️ VIDAS</th><th>⚠️ ERRORES</th><th>⚖️ PESO</th><th>RONDA</th><th>⏱️ TIEMPO</th></tr></thead>
-    <tbody id="boardBody"><tr><td colspan="7">Esperando grupos…</td></tr></tbody>
+    <thead><tr><th>#</th><th>NOMBRE</th><th><i data-ic="bolt"></i> PUNTOS</th><th><i data-ic="alert"></i> ERRORES</th><th><i data-ic="scale"></i> PESO</th><th>RONDA</th><th><i data-ic="clock"></i> TIEMPO</th></tr></thead>
+    <tbody id="boardBody"><tr><td colspan="7">Crea una sala para empezar…</td></tr></tbody>
   </table>
 
-  <footer><span id="connDot">●</span> <span id="connTxt">conectando…</span> · proyector realtime Supabase</footer>
+  <footer><span id="connDot">●</span> <span id="connTxt">conectando…</span> · proyector realtime Supabase · <i data-ic="spark"></i> Los pitufos del señor (G2) · Dev Yorlxx · Docente: Gladys Glady</footer>
 </div>
-<script type="module" src="./js/admin.js"></script>
+<script type="module" src="./js/admin.js?v=6"></script>
 </body>
 </html>

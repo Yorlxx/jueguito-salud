@@ -1,21 +1,23 @@
 /* =====================================================================
- * CONFIG · 8 rondas CON TRAMPA (títulos engañosos en UI; stats solo aquí).
- * Cada opción: ícono vectorial (emoji) + explicación de salud. Sin spoilers
+ * CONFIG · 17 rondas CON TRAMPA en 3 niveles (títulos engañosos en UI).
+ * Nivel 1 FÁCIL (×1.0, rondas 1-6) · Nivel 2 MEDIA (×1.5, rondas 7-12) ·
+ * Nivel 3 DURA (×2.0, rondas 13-17). Máximo total: 25.000 pts.
+ * Cada opción: clave de ícono SVG + explicación de salud. Sin spoilers
  * numéricos en pantalla: la UI solo muestra `label` + `icon`.
  * ===================================================================== */
 
 export const ROUNDS = [
-  { clock: "07:30 AM", room: "bedroom", day: "DÍA", tape: "RONDA 1 · 07:30 AM",
-    scene: "CELDA 01 · HABITACIÓN", narrative: "¡Suena la alarma! La cocina y el celu pelean por tu atención. ¡Tienes 8 segundos!",
+  { clock: "07:30 AM", room: "bedroom", day: "DÍA", tape: "RONDA 1 · 07:30 AM", difficulty: 1, mult: 1,
+    scene: "CELDA 01 · HABITACIÓN", narrative: "¡Suena la alarma! La cocina y el celu pelean por tu atención. ¡Tienes 15 segundos!",
     options: [
       { icon: "🥤", label: "Energizante Zero ¡sin azúcar!", name: "energizante zero", errors: 1, weight: 0, scene: "caffeine", fail: true, setDebuff: "gastritis",
         stamp: "FAIL ❌ ¡ACIDEZ Y ANSIEDAD!", bio: "¡Trampa! El 'zero azúcar' igual irrita el estómago vacío y la cafeína dispara la ansiedad." },
-      { icon: "📱", label: "Notificaciones ¡solo 20 min!", name: "notificaciones", errors: 1, weight: 0, scene: "doomscroll", fail: true, setDebuff: "hipoglucemia",
+      { icon: "📱", label: "Revisar el grupo del curso 20 min", name: "notificaciones", errors: 1, weight: 0, scene: "doomscroll", fail: true, setDebuff: "hipoglucemia",
         stamp: "FAIL ❌ ¡HIPNOSIS Y SIN AGUA!", bio: "20 minutos que se comen la mañana: ni agua ni desayuno. ¡Glucosa por el suelo!" },
       { icon: "💧", label: "Agua + Desayuno power", name: "agua y desayuno", errors: 0, weight: 0, scene: "balanced", fail: false, setDebuff: null,
         stamp: "SUCCESS ✅ ¡ENERGÍA ESTABLE!", bio: "¡Agua + proteína y fibra! Hidratación y combustible real por horas." },
     ] },
-  { clock: "09:30 AM", room: "bedroom", day: "DÍA", tape: "RONDA 2 · 09:30 AM",
+  { clock: "09:30 AM", room: "bedroom", day: "DÍA", tape: "RONDA 2 · 09:30 AM", difficulty: 1, mult: 1,
     scene: "CELDA 02 · UNIVERSIDAD", narrative: "Receso en la U. El kiosco presume etiquetas 'fit'… ¡lee la letra chica!",
     options: [
       { icon: "🍫", label: "Barra 'Fit' comercial", name: "barra fit", errors: 1, weight: 0.5, scene: "doomscroll", fail: true, heavy: true, keepDebuff: true,
@@ -25,8 +27,18 @@ export const ROUNDS = [
       { icon: "🍘", label: "Galletas saladas 'ligeras'", name: "galletas saladas", errors: 1, weight: 0.3, scene: "snackVoid", fail: true, keepDebuff: true,
         stamp: "FAIL ❌ ¡HAMBRE FANTASMA!", bio: "Refinados sin fibra ni proteína: comes y comes… ¡y sigues con hambre!" },
     ] },
-  { clock: "01:00 PM", room: "desk", day: "DÍA", tape: "RONDA 3 · 01:00 PM",
-    scene: "CELDA 03 · ESCRITORIO", narrative: "¡5 horas codeando! El almuerzo no se negocia… aunque una pastilla lo prometa.",
+  { clock: "10:45 AM", room: "bedroom", day: "DÍA", tape: "RONDA 3 · 10:45 AM", difficulty: 1, mult: 1,
+    scene: "CELDA 03 · PASILLO", narrative: "Media mañana y el estómago pide algo. El kiosco tiene tres tentaciones…",
+    options: [
+      { icon: "🥤", label: "Jugo de caja '100% fruta'", name: "jugo caja", errors: 1, weight: 0.4, scene: "doomscroll", fail: true, heavy: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡AZÚCAR LÍQUIDA!", bio: "¡Trampa! '100% fruta' en caja trae ~30 g de azúcar libre: es un refresco disfrazado, pico y crash asegurados." },
+      { icon: "🍦", label: "Yogur griego + Maní", name: "yogur mani", errors: 0, weight: 0, scene: "balanced", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡SNACK INTELIGENTE!", bio: "¡Proteína + grasa buena! Te llena de verdad y la glucosa ni se entera." },
+      { icon: "☕", label: "Café + chicle: truco viral", name: "chicle cafe", errors: 1, weight: 0, scene: "caffeine", fail: true, setDebuff: "gastritis",
+        stamp: "FAIL ❌ ¡ACIDEZ SIN COMBUSTIBLE!", bio: "Mascar chicle y café en ayunas solo engañan al hambre: acidez y temblor garantizados." },
+    ] },
+  { clock: "01:00 PM", room: "desk", day: "DÍA", tape: "RONDA 4 · 01:00 PM", difficulty: 1, mult: 1,
+    scene: "CELDA 04 · ESCRITORIO", narrative: "¡5 horas codeando! El almuerzo no se negocia… aunque una pastilla lo prometa.",
     options: [
       { icon: "💊", label: "Pastilla milagrosa ¡sin pausar!", name: "pastilla", errors: 2, weight: -1.5, scene: "gastritis", fail: true, keepDebuff: true,
         stamp: "FAIL ❌ ¡GASTRITIS Y BAJA GLUCOSA!", bio: "¡Trampa mortal! Las vitaminas NO son comida: acidez severa, gastritis y desmayo." },
@@ -35,8 +47,18 @@ export const ROUNDS = [
       { icon: "🥗", label: "Pausa 20 min + Menú casero", name: "menú sano", errors: 0, weight: 0, scene: "balanced", fail: false, setDebuff: null,
         stamp: "SUCCESS ✅ ¡ENERGÍA ESTABLE!", bio: "¡Proteína + carbohidrato complejo! Aura dorada y tarde productiva." },
     ] },
-  { clock: "04:00 PM", room: "desk", day: "TARDE", tape: "RONDA 4 · 04:00 PM",
-    scene: "CELDA 04 · SETUP", narrative: "La bajona de la tarde pega fuerte. El café con jarabe te guiña el ojo…",
+  { clock: "03:00 PM", room: "desk", day: "TARDE", tape: "RONDA 5 · 03:00 PM", difficulty: 1, mult: 1,
+    scene: "CELDA 05 · MODORRA", narrative: "Llega la modorra post-almuerzo. Los párpados pesan… ¿cómo la espantas?",
+    options: [
+      { icon: "🛋️", label: "Siesta de 2 horas", name: "siestota", errors: 1, weight: 0.2, scene: "zombie", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡MODO ZOMBI!", bio: "Dormir 2 horas de tarde rompe la noche: despiertas atontado y el sueño nocturno se arruina." },
+      { icon: "🧘", label: "Caminata 10 min + Agua", name: "caminata", errors: 0, weight: 0, scene: "recover", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡RECARGA TOTAL!", bio: "¡Aire + movimiento + agua! La modorra se va sin cafeína ni azúcar." },
+      { icon: "🥤", label: "Cola bien fría", name: "cola fria", errors: 1, weight: 0.6, scene: "caffeine", fail: true, setDebuff: "hipoglucemia",
+        stamp: "FAIL ❌ ¡AZÚCAR CON GAS!", bio: "Cola fría = 35 g de azúcar + cafeína: despiertas 20 minutos y luego el crash es doble." },
+    ] },
+  { clock: "04:00 PM", room: "desk", day: "TARDE", tape: "RONDA 6 · 04:00 PM", difficulty: 1, mult: 1,
+    scene: "CELDA 06 · SETUP", narrative: "La bajona de la tarde pega fuerte. El café con jarabe te guiña el ojo…",
     options: [
       { icon: "☕", label: "Café doble ¡con jarabe!", name: "café doble", errors: 1, weight: 0, scene: "caffeine", fail: true, setDebuff: "gastritis",
         stamp: "FAIL ❌ ¡SOBREESTIMULADO!", bio: "Azúcar + cafeína doble: insulina por las nubes, temblor y crash brutal." },
@@ -45,8 +67,18 @@ export const ROUNDS = [
       { icon: "🍬", label: "Gomitas 'sin grasa'", name: "gomitas", errors: 1, weight: 0.4, scene: "doomscroll", fail: true, heavy: true, keepDebuff: true,
         stamp: "FAIL ❌ ¡AZÚCAR DISFRAZADO!", bio: "¡Trampa! 'Sin grasa' = puro azúcar refinado: pico, crash y más antojo." },
     ] },
-  { clock: "06:30 PM", room: "desk", day: "TARDE", tape: "RONDA 5 · 06:30 PM",
-    scene: "CELDA 05 · POST-CLASES", narrative: "Salen las clases. La cena decide si duermes… o si la panza te despierta.",
+  { clock: "05:30 PM", room: "bedroom", day: "TARDE", tape: "RONDA 7 · 05:30 PM", difficulty: 2, mult: 1.5,
+    scene: "CELDA 07 · TIENDA", narrative: "Sales de clases y la tienda de la esquina te grita. El grupo debate…",
+    options: [
+      { icon: "🍔", label: "Gaseosa grande + Papas", name: "combo tienda", errors: 1, weight: 1.2, scene: "fatball", fail: true, heavy: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡COMBO BOMBA!", bio: "Azúcar líquida + fritura: el combo perfecto para el bajón de las 8 PM y grasa de sobra." },
+      { icon: "💧", label: "Agua + Plátano", name: "agua platano", errors: 0, weight: 0, scene: "balanced", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡COMBUSTIBLE LIMPIO!", bio: "¡Hidratación + potasio y energía gradual! Barato, rápido y sin crash." },
+      { icon: "🥤", label: "Té light + barra proteica", name: "te barra", errors: 1, weight: 0.6, scene: "doomscroll", fail: true, heavy: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡LIGHT DE MENTIRA!", bio: "¡Trampa nivel medio! 'Light' no es 'sin azúcar': el té trae jarabe y la barra, 20 g escondidos." },
+    ] },
+  { clock: "06:30 PM", room: "desk", day: "TARDE", tape: "RONDA 8 · 06:30 PM", difficulty: 2, mult: 1.5,
+    scene: "CELDA 08 · POST-CLASES", narrative: "Salen las clases. La cena decide si duermes… o si la panza te despierta.",
     options: [
       { icon: "🎮", label: "¡Una partidita más!", name: "saltar cena", errors: 2, weight: -0.8, scene: "gastritis", fail: true, keepDebuff: true,
         stamp: "FAIL ❌ ¡GASTRITIS NOCTURNA!", bio: "Saltarse la cena por jugar: el músculo se pierde y el descanso se arruina." },
@@ -55,8 +87,18 @@ export const ROUNDS = [
       { icon: "🍕", label: "Pizza XL ¡a las 10 PM!", name: "pizza noche", errors: 1, weight: 1.5, scene: "fatball", fail: true, heavy: true, keepDebuff: true,
         stamp: "FAIL ❌ ¡REFLUJO E INSOMNIO!", bio: "Cena pesada de noche: reflujo, insomnio y la panza rebota hasta dormirse." },
     ] },
-  { clock: "08:30 PM", room: "desk", day: "TARDE", tape: "RONDA 6 · 08:30 PM",
-    scene: "CELDA 06 · GIMNASIO", narrative: "Hora de moverse… pero el cuerpo viene sin combustible. ¡Elige sabio!",
+  { clock: "07:15 PM", room: "bedroom", day: "TARDE", tape: "RONDA 9 · 07:15 PM", difficulty: 2, mult: 1.5,
+    scene: "CELDA 09 · DELIVERY", narrative: "El grupo abre la app de delivery. El hambre opina, el bolsillo llora…",
+    options: [
+      { icon: "🍔", label: "Hamburguesa doble + Papas", name: "delivery burger", errors: 1, weight: 2.0, scene: "fatball", fail: true, heavy: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡DELIVERY MORTAL!", bio: "Doble carne + fritura de noche: digestión de 5 horas y amanecer pesado." },
+      { icon: "🥘", label: "Bowl casero recalentado", name: "bowl casero", errors: 0, weight: 0, scene: "balanced", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡CASA GANA!", bio: "¡Comida real recalentada! Misma comodidad, triple nutrición y cero delivery." },
+      { icon: "🍘", label: "Solo papas 'para picar'", name: "solo papas", errors: 1, weight: 1.0, scene: "fatball", fail: true, heavy: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡LA PORCIÓN ENGAÑA!", bio: "¡Trampa clásica! 'Solo para picar' son 500 kcal de fritura que no sacian nada." },
+    ] },
+  { clock: "08:30 PM", room: "desk", day: "TARDE", tape: "RONDA 10 · 08:30 PM", difficulty: 2, mult: 1.5,
+    scene: "CELDA 10 · GIMNASIO", narrative: "Hora de moverse… pero el cuerpo viene sin combustible. ¡Elige sabio!",
     options: [
       { icon: "🏋️", label: "¡HIIT brutal 1 hora!", name: "hiit", errors: 1, weight: -0.5, scene: "gastritis", fail: true, keepDebuff: true,
         stamp: "FAIL ❌ ¡CATABOLISMO Y COLAPSO!", bio: "¡Trampa! Hierro pesado sin comer: mareos, el músculo se quema y ¡al suelo!" },
@@ -65,8 +107,18 @@ export const ROUNDS = [
       { icon: "🛋️", label: "Sillón + Pantallas", name: "sillón", errors: 1, weight: 0.3, scene: "zombie", fail: true, keepDebuff: true,
         stamp: "FAIL ❌ ¡MODO ZOMBI!", bio: "¡Echado 3 horas! La espalda se oxida y el cerebro se apaga." },
     ] },
-  { clock: "10:30 PM", room: "bedroom", day: "NOCHE", tape: "RONDA 7 · 10:30 PM",
-    scene: "CELDA 07 · LABORATORIO IA", narrative: "La IA te vende milagros y el algoritmo te espía el antojo…",
+  { clock: "09:15 PM", room: "bedroom", day: "TARDE", tape: "RONDA 11 · 09:15 PM", difficulty: 2, mult: 1.5,
+    scene: "CELDA 11 · MARATÓN", narrative: "Maratón de series con el grupo. Alguien dice 'algo para picar'…",
+    options: [
+      { icon: "🍬", label: "Helado familiar entero", name: "helado", errors: 1, weight: 1.4, scene: "fatball", fail: true, heavy: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡POTE VACÍO, PANZA LLENA!", bio: "Un pote 'familiar' son 1.000 kcal de azúcar y grasa que ni registras mirando la pantalla." },
+      { icon: "🥗", label: "Infusión + Mandarinas", name: "infusion", errors: 0, weight: 0, scene: "balanced", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡PICOTEO MAESTRO!", bio: "¡Manos ocupadas pelando fruta + infusión caliente! Picoteo sin culpa ni crash." },
+      { icon: "🍘", label: "Palomitas light de microondas", name: "palomitas", errors: 1, weight: 0.7, scene: "snackVoid", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡MAÍZ CON TRUCO!", bio: "¡Trampa! El maíz es sano, pero la bolsa XL trae manteca, sal y saborizantes: comes sin saciarte." },
+    ] },
+  { clock: "10:30 PM", room: "bedroom", day: "NOCHE", tape: "RONDA 12 · 10:30 PM", difficulty: 2, mult: 1.5,
+    scene: "CELDA 12 · LABORATORIO IA", narrative: "La IA te vende milagros y el algoritmo te espía el antojo…",
     options: [
       { icon: "🤖", label: "¡Detox IA 500 kcal!", name: "detox ia", errors: 2, weight: -1.2, scene: "robot", fail: true, keepDebuff: true,
         stamp: "FAIL ❌ ¡DESNUTRICIÓN Y REBOTE!", bio: "¡Trampa! 500 kcal dictadas por un bot: desnutrición y rebote grave." },
@@ -75,19 +127,59 @@ export const ROUNDS = [
       { icon: "💊", label: "Suplementos 'virales'", name: "suplementos", errors: 1, weight: 0, scene: "robot", fail: true, keepDebuff: true,
         stamp: "FAIL ❌ ¡FRAUDE ALGORÍTMICO!", bio: "¡Píldoras milagro del algoritmo! Ni nutren ni adelgazan: solo vacían tu bolsillo." },
     ] },
-  { clock: "11:50 PM", room: "bedroom", day: "NOCHE", tape: "RONDA 8 · 11:50 PM",
-    scene: "CELDA 08 · DORMITORIO", narrative: "Última escena. El celu brilla en la oscuridad… ¡cierra el día como campeón!",
+  { clock: "11:00 PM", room: "bedroom", day: "NOCHE", tape: "RONDA 13 · 11:00 PM", difficulty: 3, mult: 2,
+    scene: "CELDA 13 · SED NOCTURNA", narrative: "Sed a las 11 PM. La refri está llena de opciones 'inofensivas'… ¿o no?",
+    options: [
+      { icon: "🥤", label: "Zero 600 ml: 0 azúcar, 0 culpa", name: "zero noche", errors: 2, weight: 0, scene: "caffeine", fail: true, setDebuff: "gastritis",
+        stamp: "FAIL ❌ ¡ZERO NO ES AGUA!", bio: "¡Trampa dura! Zero de noche = cafeína + gas + acidez: arruina el sueño aunque no tenga azúcar." },
+      { icon: "💧", label: "Vaso pequeño de agua", name: "agua noche", errors: 0, weight: 0, scene: "balanced", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡HIDRATACIÓN JUSTA!", bio: "¡Un vaso pequeño basta! Hidrata sin levantarte al baño a las 3 AM." },
+      { icon: "☕", label: "Té detox 'quema grasa'", name: "te detox", errors: 2, weight: -0.3, scene: "gastritis", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡DETOX DE MENTIRA!", bio: "¡Trampa dura! Ningún té quema grasa: son diuréticos que irritan el estómago vacío de noche." },
+    ] },
+  { clock: "11:20 PM", room: "bedroom", day: "NOCHE", tape: "RONDA 14 · 11:20 PM", difficulty: 3, mult: 2,
+    scene: "CELDA 14 · INFLUENCER", narrative: "Un influencer musculoso jura que su secreto son dos frascos. El grupo duda…",
+    options: [
+      { icon: "💊", label: "Quemadores con estudios 'clínicos'", name: "quemadores", errors: 2, weight: -0.5, scene: "pills", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡QUÍMICA SIN EVIDENCIA!", bio: "¡Trampa dura! Quemadores sin evidencia + taquicardia de regalo. El músculo del video es edición, no pastillas." },
+      { icon: "🌙", label: "Ignorar y dormir", name: "ignorar dormir", errors: 0, weight: 0, scene: "sleepWin", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡FILTRO CRÍTICO!", bio: "¡El mejor suplemento es dormir 8 horas! Hormonas en orden y bolsillo intacto." },
+      { icon: "🍦", label: "Proteína triple dosis", name: "prote triple", errors: 2, weight: 0.8, scene: "fatball", fail: true, heavy: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡MÁS NO ES MEJOR!", bio: "¡Trampa dura! El exceso de proteína no se vuelve músculo: se guarda como grasa y castiga riñones." },
+    ] },
+  { clock: "11:35 PM", room: "desk", day: "NOCHE", tape: "RONDA 15 · 11:35 PM", difficulty: 3, mult: 2,
+    scene: "CELDA 15 · ANSIEDAD", narrative: "Ansiedad pre-examen. La mano tiembla y va sola hacia los dulces…",
+    options: [
+      { icon: "🍬", label: "Atracón de dulces", name: "atracon", errors: 2, weight: 1.6, scene: "fatball", fail: true, heavy: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡ANSIEDAD CON AZÚCAR!", bio: "¡Trampa dura! El azúcar calma 10 minutos y devuelve ansiedad doble más culpa y 800 kcal." },
+      { icon: "🌙", label: "Respirar + Agua + Dormir", name: "respirar", errors: 0, weight: 0, scene: "sleepWin", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡CALMA REAL!", bio: "¡Respiración + agua + cama! El cerebro ansioso necesita descanso, no glucosa." },
+      { icon: "☕", label: "Café para seguir estudiando", name: "cafe estudiar", errors: 2, weight: 0, scene: "caffeine", fail: true, setDebuff: "gastritis",
+        stamp: "FAIL ❌ ¡FALSA PRODUCTIVIDAD!", bio: "¡Trampa dura! Estudiar con cafeína a las 11 PM = memoria nula mañana + ojeras de panda." },
+    ] },
+  { clock: "11:45 PM", room: "bedroom", day: "NOCHE", tape: "RONDA 16 · 11:45 PM", difficulty: 3, mult: 2,
+    scene: "CELDA 16 · COMPENSACIÓN", narrative: "'Comí mal hoy, así que no ceno'. Suena a disciplina… ¿o a trampa?",
+    options: [
+      { icon: "🌙", label: "Ayuno total hasta mañana", name: "ayuno total", errors: 2, weight: -0.9, scene: "gastritis", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡COMPENSAR CASTIGANDO!", bio: "¡Trampa dura! Saltar la cena 'para compensar' quema músculo, dispara el ácido y mañana atracones." },
+      { icon: "🥘", label: "Cena ligera aunque tarde", name: "cena tarde", errors: 0, weight: 0, scene: "balanced", fail: false, setDebuff: null,
+        stamp: "SUCCESS ✅ ¡CONSTANCIA GANA!", bio: "¡Cenar ligero siempre vence a no cenar! Rutina estable, cuerpo estable." },
+      { icon: "💧", label: "Solo agua con limón detox", name: "agua limon", errors: 2, weight: -0.2, scene: "gastritis", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡LIMÓN NO ES CENA!", bio: "¡Trampa dura! El agua con limón no desintoxica nada y el ácido en ayunas quema el estómago." },
+    ] },
+  { clock: "11:50 PM", room: "bedroom", day: "NOCHE", tape: "RONDA 17 · 11:50 PM", difficulty: 3, mult: 2,
+    scene: "CELDA 17 · DORMITORIO", narrative: "Última escena. El celu brilla en la oscuridad… ¡cierra el día como campeón!",
     options: [
       { icon: "📱", label: "¡Un videíto más!", name: "doomscrolling", errors: 1, weight: 0, scene: "doomscroll", fail: true, keepDebuff: true,
         stamp: "FAIL ❌ ¡MELATONINA BLOQUEADA!", bio: "Doomscrolling nocturno: la luz azul inhibe la melatonina. ¡Mañana zombi!" },
       { icon: "🌙", label: "Adiós pantallas ¡a mimir!", name: "descanso", errors: 0, weight: 0, scene: "sleepWin", fail: false, setDebuff: null,
         stamp: "SUCCESS ✅ ¡DESCANSO DE ORO!", bio: "¡30 min sin pantallas + 8 horas de sueño! Reparación total activada." },
-      { icon: "💊", label: "Pastilla para dormir", name: "pastilla dormir", errors: 1, weight: 0, scene: "pills", fail: true, keepDebuff: true,
-        stamp: "FAIL ❌ ¡NO TE AUTOMEDIQUES!", bio: "¡Trampa! Pastillas sin receta: atontan, no descansan y crean dependencia." },
+      { icon: "💊", label: "Pastilla para dormir", name: "pastilla dormir", errors: 2, weight: 0, scene: "pills", fail: true, keepDebuff: true,
+        stamp: "FAIL ❌ ¡NO TE AUTOMEDIQUES!", bio: "¡Trampa final! Pastillas sin receta: atontan, no descansan y crean dependencia." },
     ] },
 ];
 
 /** Fallo automático cuando el temporizador llega a 0. */
 export const TIMEOUT = { icon: "😱", name: "estrés", errors: 2, weight: 0, scene: "paralysis",
   fail: true, keepDebuff: true, stamp: "FAIL ❌ ¡PARÁLISIS POR ESTRÉS!",
-  bio: "¡8 segundos mirando al vacío! El estrés elige… ¡y elige mal!" };
+  bio: "¡15 segundos mirando al vacío! El estrés elige… ¡y elige mal!" };

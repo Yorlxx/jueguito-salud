@@ -1,64 +1,67 @@
 /* =====================================================================
  * CORE · Estado global del juego (fuente única de verdad, serializable).
- * Gestiona: 3 Vidas, Reloj de 8 s, Peso (kg), Errores y Grupo del celular.
- * Reglas: opción mala (fail) = -1 vida · sana = vidas intactas.
+ * Gestiona: Puntos Kahoot, Reloj de 15 s, Peso (kg), Errores, Sala y Jugador.
+ * Reglas: acierto = 500 base + hasta 500 por velocidad · fallo/timeout = 0.
+ * Todos completan todas las rondas (sin eliminación).
  * `toPayload()` serializa la fila que se sincroniza a Supabase (players).
  * ===================================================================== */
 
-export const MAX_LIVES = 3;
-export const ROUND_SECONDS = 8;
+export const MAX_POINTS = 1000; // tope por ronda (estilo Kahoot)
+export const ROUND_SECONDS = 15;
 
 const INITIAL = Object.freeze({
-  lives: MAX_LIVES,
+  points: 0,
   errors: 0,
   weight: 70.0,
   roundIndex: 0,
-  debuff: null, // secuela encadenada ("gastritis" | "hipoglucemia" | null)
-  groupName: null, // "Grupo 1"…"Grupo 4" (lo elige el jugador en su teléfono)
+  sessionId: null, // UUID de la sala (null = práctica local)
+  playerName: null, // nombre libre del equipo o alumno
+  result: "ACTIVE", // ACTIVE | FINISHED (columna players.status)
 });
 
 export class GameState {
   constructor() { this.reset(); }
 
-  /** Vuelve al estado inicial (botón Reintentar). Conserva el grupo. */
+  /** Vuelve al estado inicial. Conserva sala + nombre (botón Reintentar). */
   reset() {
-    const g = this.groupName;
+    const s = this.sessionId, n = this.playerName;
     Object.assign(this, { ...INITIAL });
-    this.groupName = g;
+    this.sessionId = s;
+    this.playerName = n;
   }
 
-  /** ¿Se quedó sin vidas? → game over inmediato. */
-  get isDead() { return this.lives <= 0; }
-
-  /** Identidad del celular para el leaderboard en vivo. */
-  setGroup(name) { this.groupName = name; }
+  /** Identidad del celular dentro de la sala. */
+  setIdentity(sessionId, playerName) {
+    this.sessionId = sessionId;
+    this.playerName = playerName;
+  }
 
   /**
-   * Aplica una opción al estado. El dominó oculto (secuela + comida
-   * pesada) solo agrava el relato: la pérdida siempre es 1 vida.
-   * @returns {{lost: number, domino: boolean}}
+   * Aplica una opción al estado.
+   * @param {object} opt opción elegida (fail/errors/weight)
+   * @param {number} timeLeft segundos restantes al responder (velocidad)
+   * @param {number} mult multiplicador del nivel (1 / 1.5 / 2)
+   * @returns {{gained: number}} puntos ganados esta ronda
    */
-  applyChoice(opt) {
-    const domino = !!(this.debuff && opt.heavy);
-    let lost = 0;
-    if (opt.fail || (opt.errors || 0) > 0) {
-      this.lives = Math.max(0, this.lives - 1);
-      lost = 1;
-    }
+  applyChoice(opt, timeLeft = 0, mult = 1) {
+    const speed = Math.max(0, Math.min(1, timeLeft / ROUND_SECONDS));
+    const gained = opt.fail ? 0 : Math.round((500 + 500 * speed) * mult);
+    this.points += gained;
     this.errors += opt.errors || 0;
     this.weight = Math.round((this.weight + (opt.weight || 0)) * 10) / 10;
-    if ("setDebuff" in opt) this.debuff = opt.setDebuff; // null = limpia la secuela
-    return { lost, domino };
+    return { gained };
   }
 
-  /** Fila lista para `players` (upsert por `group_name`). */
-  toPayload() {
+  /** Fila lista para `players` (upsert por session_id + player_name). */
+  toPayload(totalRounds = 8) {
     return {
-      group_name: this.groupName,
-      lives: this.lives,
+      session_id: this.sessionId,
+      player_name: this.playerName,
+      points: this.points,
       weight_kg: this.weight,
       errors: this.errors,
-      current_round: Math.min(this.roundIndex + 1, 8),
+      current_round: Math.min(this.roundIndex + 1, totalRounds),
+      status: this.result,
     };
   }
 }

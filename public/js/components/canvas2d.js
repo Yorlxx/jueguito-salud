@@ -329,6 +329,18 @@ export class StickmanAnimator {
     },
   };
 
+  /** Carril vacío: habitación apagada + silueta "?" quieta (sin rAF). */
+  drawEmpty(room, day) {
+    this.cancel();
+    this.room(room, day);
+    this.ctx.save();
+    this.ctx.globalAlpha = 0.35;
+    this.stick(110, 150, 1.1, { eye: "normal", mouth: "sad", hat: "none" });
+    this.ctx.restore();
+    this.txt("?", 110, 70, 34, "#1c2433", true);
+    this.txt("— SIN CONECTAR —", 110, 185, 11, "#1c2433", true);
+  }
+
   /** Pose viva mientras el jugador decide. */
   startIdle(room, day) {
     this.cancel();

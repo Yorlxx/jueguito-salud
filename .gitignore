@@ -7,3 +7,6 @@ dist/
 # entorno local (credenciales Supabase: nunca subir)
 .env.local
 .env.*.local
+
+# respuestas con datos reales de alumnos (privacidad: nunca subir)
+personalizacion/respuestas_personalizacion.txt

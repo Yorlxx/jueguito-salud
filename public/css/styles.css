@@ -2,7 +2,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   background: #5b6b85; color: #1c2433; min-height: 100vh; display: flex; justify-content: center;
-  font-family: "Comic Sans MS", "Chalkboard SE", "Segoe Print", cursive, sans-serif;
+  font-family: "Nunito", "Comic Sans MS", "Chalkboard SE", "Segoe Print", cursive, sans-serif;
   background-image: radial-gradient(rgba(255,255,255,.14) 1.5px, transparent 1.6px);
   background-size: 18px 18px;
 }
@@ -21,10 +21,9 @@ body {
 .pennant .v { font-size: 17px; font-weight: 900; }
 #timerNum.danger { color: #dc2626; animation: blink .5s infinite; }
 @keyframes blink { 50% { opacity: .45; } }
-#hearts { font-size: 19px; letter-spacing: 2px; line-height: 1.3; }
-#hearts .lost { filter: grayscale(1); opacity: .55; }
-#hearts.break { animation: heartBreak .5s; }
-@keyframes heartBreak { 0% { transform: scale(1); } 40% { transform: scale(1.35) rotate(-8deg); } 100% { transform: scale(1); } }
+#hudPts { font-size: 22px; font-weight: 900; color: #b45309; line-height: 1.2; }
+#hudPts.bump { animation: ptsBump .45s; }
+@keyframes ptsBump { 0% { transform: scale(1); } 40% { transform: scale(1.3); } 100% { transform: scale(1); } }
 
 /* --- Tira de nivel estilo cinta --- */
 #levelTape { align-self: center; margin: 10px 0 0; background: #1c2433; color: #fde047; font-weight: 900;
@@ -36,11 +35,19 @@ body {
 
 /* --- Panel cómic / escenario --- */
 main { flex: 1; display: flex; flex-direction: column; padding: 8px 10px; }
-#panel { background: #fdf6e3; border: 4px solid #1c2433; border-radius: 6px; overflow: hidden;
+#panel { position: relative; background: #fdf6e3; border: 4px solid #1c2433; border-radius: 6px; overflow: hidden;
   box-shadow: 5px 6px 0 rgba(28,36,51,.55); }
+#gainPop { position: absolute; top: 34%; left: 50%; transform: translateX(-50%);
+  font-size: 34px; font-weight: 900; color: #15803d; opacity: 0; pointer-events: none;
+  -webkit-text-stroke: 1px #fff; text-shadow: 2px 2px 0 #fff; z-index: 5; }
+#gainPop.pop { animation: gainFloat 1.2s ease-out; }
+@keyframes gainFloat { 0% { opacity: 0; transform: translateX(-50%) translateY(12px) scale(.6); }
+  20% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1.1); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-34px) scale(1); } }
 #sceneTag { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px;
   background: #1c2433; color: #fff; font-size: 10px; font-weight: 900; letter-spacing: 1px; }
 #cutTag { display: none; color: #fca5a5; animation: blink .6s infinite; }
+#netDot { font-size: 12px; color: #ef4444; }
 #panel.cut #cutTag { display: inline; }
 #gameCanvas { display: block; width: 100%; height: auto; background: #aebdd2; }
 #speech { margin: 8px; background: #fff; border: 3px solid #1c2433; border-radius: 12px; padding: 8px 10px;
@@ -91,18 +98,61 @@ main { flex: 1; display: flex; flex-direction: column; padding: 8px 10px; }
   box-shadow: 4px 5px 0 rgba(28,36,51,.6); cursor: pointer; -webkit-text-stroke: .5px #1c2433; }
 #btnRetry:active { transform: scale(.95); }
 
-/* --- Overlay elige tu grupo --- */
-#groupOverlay { position: fixed; inset: 0; z-index: 60; background: rgba(28,36,51,.9);
+/* --- Registro a sala --- */
+#joinOverlay { position: fixed; inset: 0; z-index: 60; background: rgba(28,36,51,.9);
   display: flex; align-items: center; justify-content: center; padding: 16px; }
-#groupOverlay.hide { display: none; }
-#groupBox { width: 100%; max-width: 340px; background: #fdf6e3; border: 4px solid #1c2433; border-radius: 8px;
+#joinOverlay.hide { display: none; }
+#joinBox { width: 100%; max-width: 340px; background: #fdf6e3; border: 4px solid #1c2433; border-radius: 8px;
   padding: 20px 16px; text-align: center; box-shadow: 5px 6px 0 rgba(0,0,0,.5); transform: rotate(-.8deg); }
-#groupBox h2 { font-size: 19px; font-weight: 900; letter-spacing: 1px; }
-#groupBox p { font-size: 12px; margin-top: 6px; line-height: 1.45; }
-#groupBox .tiny { font-size: 10px; color: #64748b; margin-top: 10px; }
-#groupGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
-#groupGrid button { padding: 14px 0; font-family: inherit; font-size: 20px; font-weight: 900;
-  background: #fff; color: #1c2433; border: 3px solid #1c2433; border-radius: 8px;
+#joinBox h2 { font-size: 19px; font-weight: 900; letter-spacing: 1px; }
+#joinBox .lema { font-size: 12px; font-style: italic; opacity: .75; margin-top: 4px; }
+#joinBox label { display: block; margin-top: 12px; font-size: 11px; font-weight: 900; text-align: left; }
+#joinBox input { display: block; width: 100%; margin-top: 4px; padding: 12px; font-family: inherit;
+  font-size: 16px; font-weight: 800; color: #1c2433; background: #fff;
+  border: 3px solid #1c2433; border-radius: 8px; }
+#joinBox input:focus { outline: 3px solid #22d3ee; }
+#joinErr { min-height: 18px; margin-top: 8px; font-size: 12px; font-weight: 900; color: #dc2626; }
+#btnJoin { width: 100%; margin-top: 4px; padding: 14px; font-family: inherit; font-size: 16px; font-weight: 900;
+  letter-spacing: 1px; background: #22c55e; color: #fff; border: 3px solid #1c2433; border-radius: 10px;
   box-shadow: 3px 3px 0 rgba(28,36,51,.5); cursor: pointer; }
-#groupGrid button:active { transform: scale(.93); }
-#groupGrid button.sel { background: #22d3ee; }
+#btnJoin:active { transform: scale(.95); }
+#joinBox .tiny { font-size: 10px; color: #64748b; margin-top: 10px; }
+
+/* --- Modal de pausa docente (encima de todo) --- */
+#pauseOverlay { position: fixed; inset: 0; z-index: 70; background: rgba(28,36,51,.88);
+  display: flex; align-items: center; justify-content: center; padding: 16px; }
+#pauseOverlay.hide { display: none; }
+#pauseBox { width: 100%; max-width: 340px; background: #fdf6e3; border: 4px solid #1c2433; border-radius: 8px;
+  padding: 24px 16px; text-align: center; box-shadow: 5px 6px 0 rgba(0,0,0,.5); }
+#pauseIcon { font-size: 52px; animation: waitPulse 1.4s ease-in-out infinite; }
+#pauseBox h2 { font-size: 18px; font-weight: 900; margin-top: 10px; }
+#pauseBox p { font-size: 12px; margin-top: 8px; color: #475569; }
+
+/* --- Sala de espera (debajo del picker de grupo) --- */
+#waitOverlay { position: fixed; inset: 0; z-index: 55; background: rgba(28,36,51,.93);
+  display: flex; align-items: center; justify-content: center; padding: 16px; }
+#waitOverlay.hide { display: none; }
+#waitBox { width: 100%; max-width: 340px; background: #fdf6e3; border: 4px solid #1c2433; border-radius: 8px;
+  padding: 24px 16px; text-align: center; box-shadow: 5px 6px 0 rgba(0,0,0,.5); transform: rotate(.8deg); }
+#waitSpin { font-size: 52px; animation: waitPulse 1.2s ease-in-out infinite; }
+@keyframes waitPulse { 0%,100% { transform: scale(1) rotate(-8deg); } 50% { transform: scale(1.2) rotate(8deg); } }
+#waitBox h2 { font-size: 18px; font-weight: 900; margin-top: 10px; line-height: 1.4; }
+#waitBox p { font-size: 12px; margin-top: 8px; color: #475569; }
+
+/* --- Créditos del grupo --- */
+#credits { text-align: center; font-size: 11px; font-weight: 800; padding: 2px 10px 12px; opacity: .8; }
+
+/* --- Lobby de resultados --- */
+#doneOverlay { position: fixed; inset: 0; z-index: 60; background: rgba(28,36,51,.93);
+  display: flex; align-items: center; justify-content: center; padding: 16px; }
+#doneOverlay.hide { display: none; }
+#doneBox { width: 100%; max-width: 340px; background: #fdf6e3; border: 4px solid #1c2433; border-radius: 8px;
+  padding: 24px 16px; text-align: center; box-shadow: 5px 6px 0 rgba(0,0,0,.5); transform: rotate(-.8deg); }
+#doneMedal { font-size: 52px; animation: waitPulse 1.4s ease-in-out infinite; }
+#doneBox h2 { font-size: 18px; font-weight: 900; margin-top: 10px; }
+#doneStats { font-size: 15px; font-weight: 900; margin-top: 8px; }
+#doneBox p { font-size: 12px; margin-top: 8px; color: #475569; }
+#btnReplay { margin-top: 14px; width: 100%; padding: 12px; font-family: inherit; font-size: 14px; font-weight: 900;
+  background: #22c55e; color: #fff; border: 3px solid #1c2433; border-radius: 10px;
+  box-shadow: 3px 3px 0 rgba(28,36,51,.5); cursor: pointer; }
+#btnReplay:active { transform: scale(.95); }
