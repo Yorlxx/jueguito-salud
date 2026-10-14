@@ -49,7 +49,13 @@ export function renderRound(round, onPick) {
   box.innerHTML = ""; box.style.display = "flex";
   $("optsHidden").style.display = "none";
   hideContinue();
-  round.options.forEach((opt) => {
+  // Orden aleatorio en cada ronda: la correcta no siempre está al centro.
+  const opts = [...round.options];
+  for (let i = opts.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [opts[i], opts[j]] = [opts[j], opts[i]];
+  }
+  opts.forEach((opt) => {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "pola"; b.setAttribute("aria-label", opt.name);
